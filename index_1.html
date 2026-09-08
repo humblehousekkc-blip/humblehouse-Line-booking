@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>จองห้องพัก</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== Mood & tone: เอสเพรสโซ่น้ำตาลเข้ม + ครีม แบบ editorial minimal ===== */
+  :root {
+    --header-bg: #362419;      /* น้ำตาลเข้มแบบปกหนังสือ */
+    --header-text: #EFE7DA;    /* ครีมอ่อนบนพื้นเข้ม */
+    --accent: #5B4531;         /* น้ำตาลกลาง ใช้กับปุ่ม/state ที่เลือก */
+    --accent-dark: #40301F;    /* น้ำตาลเข้ม ใช้ตอน active/hover */
+    --accent-soft: #ECE3D3;    /* ครีมอ่อน ใช้เป็นพื้น state ที่เลือก */
+    --bg: #F1E9DC;             /* พื้นหลังหน้าเว็บ ครีมอุ่น */
+    --card: #FBF8F2;           /* พื้นการ์ด ครีมเกือบขาว */
+    --text: #2B2118;           /* ตัวอักษรหลัก น้ำตาลเข้มเกือบดำ */
+    --muted: #8C7D6A;          /* ตัวอักษรรอง น้ำตาล-เทาอุ่น */
+    --danger: #A8442E;         /* แดงอิฐ เข้ากับโทน แทนสีแดงจัด */
+    --border: #DED2BD;         /* เส้นขอบครีมเข้ม */
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Jost", "Noto Sans Thai", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    padding: 32px 16px 28px;
+    text-align: center;
+  }
+  header .eyebrow {
+    font-family: "Jost", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    margin: 0;
+    font-family: "Cormorant Garamond", "Noto Sans Thai", serif;
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: 0.02em;
+  }
+  header p { margin: 8px 0 0; font-size: 12px; letter-spacing: 0.08em; opacity: 0.75; text-transform: uppercase; }
+  main {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+  label:first-child { margin-top: 0; }
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--text);
+  }
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 3px;
+    background: var(--accent);
+    color: var(--header-text);
+    font-family: "Jost", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 18px;
+  }
+  button:disabled { background: #C9BBA4; cursor: not-allowed; }
+  button:active:not(:disabled) { background: var(--accent-dark); }
+  .room-list { margin-top: 12px; }
+  .room-option {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: #fff;
+  }
+  .room-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .room-option.full {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .room-name { font-weight: 600; font-size: 15px; font-family: "Cormorant Garamond", serif; }
+  .room-meta { font-size: 11px; letter-spacing: 0.04em; color: var(--muted); margin-top: 3px; text-transform: uppercase; }
+  .room-price { font-weight: 600; color: var(--accent-dark); white-space: nowrap; font-family: "Cormorant Garamond", serif; font-size: 16px; }
+  .msg {
+    padding: 10px 12px;
+    border-radius: 3px;
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+  }
+  .msg.error { background: #F3E4DE; color: var(--danger); display: block; }
+  .msg.success { background: var(--accent-soft); color: var(--accent-dark); display: block; }
+  .msg.info { background: #EFE9DC; color: var(--muted); display: block; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 6px; letter-spacing: 0.02em; }
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(239,231,218,0.5);
+    border-top-color: var(--header-text);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 6px;
+    vertical-align: -2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  footer {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    padding: 24px 16px 34px;
+  }
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab-btn {
+    flex: 1;
+    padding: 11px 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    border-radius: 3px;
+    font-family: "Jost", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 0;
+  }
+  .tab-btn.active { background: var(--accent); color: var(--header-text); border-color: var(--accent); }
+  .room-option .room-thumb {
+    width: 52px; height: 52px;
+    border-radius: 3px;
+    object-fit: cover;
+    background: var(--accent-soft);
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .room-option-left { display: flex; align-items: center; }
+  .booking-code {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 6px 10px;
+    background: var(--accent-dark);
+    color: var(--header-text);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    border-radius: 3px;
+  }
+  .my-booking-item {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px;
+    margin-top: 12px;
+    background: #fff;
+  }
+  .my-booking-item .status {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Reservation</div>
+  <h1 id="hotelNameLabel">ระบบจองผ่าน LINE</h1>
+  <p>จองห้องพักของท่าน</p>
+</header>
+
+<main>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tabBtnBook" type="button">จองห้องพัก</button>
+    <button class="tab-btn" id="tabBtnMy" type="button">ตรวจสอบการจองของฉัน</button>
+  </div>
+
+  <div id="tabBook">
+
+  <div class="card">
+    <label for="checkin">วันเช็คอิน</label>
+    <input type="date" id="checkin" />
+
+    <label for="checkout">วันเช็คเอาท์</label>
+    <input type="date" id="checkout" />
+
+    <button id="btnSearch" type="button">ค้นหาห้องว่าง</button>
+    <div id="searchMsg" class="msg"></div>
+  </div>
+
+  <div class="card" id="roomCard" style="display:none;">
+    <div style="font-weight:600; margin-bottom:4px;">เลือกห้องพัก</div>
+    <div class="hint">แตะเพื่อเลือกห้องที่ต้องการ</div>
+    <div class="room-list" id="roomList"></div>
+  </div>
+
+  <div class="card" id="guestCard" style="display:none;">
+    <label for="guestName">ชื่อผู้จอง</label>
+    <input type="text" id="guestName" placeholder="ชื่อ-นามสกุล" />
+
+    <label for="guestPhone">เบอร์โทรติดต่อ</label>
+    <input type="tel" id="guestPhone" placeholder="08x-xxx-xxxx" />
+
+    <div class="row">
+      <div>
+        <label for="guestCount">จำนวนผู้เข้าพัก</label>
+        <select id="guestCount">
+          <option value="">เลือก</option>
+        </select>
+      </div>
+      <div>
+        <label for="carCount">จำนวนรถ (คัน)</label>
+        <select id="carCount">
+          <option value="">เลือก</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="checkinTime">เวลาเข้าที่พัก</label>
+    <input type="time" id="checkinTime" />
+
+    <label for="guestNote">หมายเหตุ (ถ้ามี)</label>
+    <input type="text" id="guestNote" placeholder="เช่น ความต้องการพิเศษ" />
+
+    <label for="slipFile">แนบสลิปโอนเงิน (ถ้าชำระแล้ว)</label>
+    <input type="file" id="slipFile" accept="image/*" />
+    <div class="hint" id="slipHint">ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองก่อนยืนยันการจอง</div>
+    <img id="slipPreview" style="display:none; max-width:100%; margin-top:8px; border-radius:4px; border:1px solid var(--border);" />
+
+    <button id="btnConfirm" type="button">ยืนยันการจอง</button>
+    <div id="confirmMsg" class="msg"></div>
+  </div>
+
+  </div>
+
+  <div id="tabMy" style="display:none;">
+    <div class="card">
+      <label for="myPhone">เบอร์โทรที่ใช้จอง</label>
+      <input type="tel" id="myPhone" placeholder="08x-xxx-xxxx" />
+
+      <label for="myCode">รหัสการจอง</label>
+      <input type="text" id="myCode" placeholder="เช่น A1B2C3" style="text-transform:uppercase;" />
+
+      <button id="btnMyBooking" type="button">ตรวจสอบการจอง</button>
+      <div id="myMsg" class="msg"></div>
+      <div id="myResults"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>ข้อมูลของท่านจะถูกส่งไปยังโรงแรมเพื่อยืนยันการจอง</footer>
+
+<script>
+/* =========================================================
+   CONFIG — แก้ค่าตรงนี้ให้ตรงกับของจริงหลังติดตั้ง Apps Script
+   (ดูวิธีหาค่าเหล่านี้ใน SETUP_GUIDE.md)
+   ========================================================= */
+const CONFIG = {
+  // URL ของ Google Apps Script Web App ที่ deploy ไว้ (ตัวเดียว ใช้ได้ทั้ง GET และ POST)
+  API_URL: "https://script.google.com/macros/s/AKfycbwOFWc264OkwMoWjakUPZbKZwHIkoO_asfVLaYEB5r3Lfegud_b7Qk5tMVOaPpGv5xCJg/exec",
+
+  // ชื่อโรงแรม/ป้ายหัวข้อ (แก้ได้อิสระ ไม่กระทบระบบ)
+  HOTEL_NAME: "Humble House KKC"
+};
+
+document.getElementById("hotelNameLabel").textContent = CONFIG.HOTEL_NAME;
+
+let selectedRoom = null;
+let availableRooms = [];
+let currentCheckin = "";
+let currentCheckout = "";
+let slipBase64 = "";
+let slipMimeType = "";
+
+/* ===== เติมตัวเลือกจำนวนผู้เข้าพัก / จำนวนรถ ===== */
+(function populateSelects() {
+  const guestSel = document.getElementById("guestCount");
+  for (let i = 1; i <= 10; i++) {
+    const opt = document.createElement("option");
+    opt.value = i; opt.textContent = i + " คน";
+    guestSel.appendChild(opt);
+  }
+  const carSel = document.getElementById("carCount");
+  for (let i = 0; i <= 5; i++) {
+    const opt = document.createElement("option");
+    opt.value = i; opt.textContent = i + " คัน";
+    carSel.appendChild(opt);
+  }
+})();
+
+/* ===== สลับแท็บ "จองห้องพัก" / "ตรวจสอบการจองของฉัน" ===== */
+document.getElementById("tabBtnBook").addEventListener("click", () => switchTab("book"));
+document.getElementById("tabBtnMy").addEventListener("click", () => switchTab("my"));
+
+function switchTab(tab) {
+  document.getElementById("tabBook").style.display = tab === "book" ? "block" : "none";
+  document.getElementById("tabMy").style.display = tab === "my" ? "block" : "none";
+  document.getElementById("tabBtnBook").classList.toggle("active", tab === "book");
+  document.getElementById("tabBtnMy").classList.toggle("active", tab === "my");
+}
+
+/* ===== แนบสลิป: ย่อรูปด้วย canvas ก่อนแปลงเป็น base64 (ลดขนาดไฟล์ก่อนส่ง) ===== */
+document.getElementById("slipFile").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) { slipBase64 = ""; slipMimeType = ""; return; }
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 1200;
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width; canvas.height = height;
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+      slipMimeType = "image/jpeg";
+      slipBase64 = dataUrl.split(",")[1];
+
+      const preview = document.getElementById("slipPreview");
+      preview.src = dataUrl;
+      preview.style.display = "block";
+      document.getElementById("slipHint").textContent = "แนบสลิปแล้ว — ทางโรงแรมจะตรวจสอบก่อนยืนยันการจอง";
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function showMsg(el, type, text) {
+  el.className = "msg " + type;
+  el.textContent = text;
+  el.style.display = "block";
+}
+function hideMsg(el) {
+  el.style.display = "none";
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
+document.getElementById("checkin").min = todayStr();
+document.getElementById("checkin").value = todayStr();
+
+document.getElementById("checkin").addEventListener("change", () => {
+  const ci = document.getElementById("checkin").value;
+  document.getElementById("checkout").min = ci;
+});
+
+document.getElementById("btnSearch").addEventListener("click", searchAvailability);
+
+async function searchAvailability() {
+  const checkin = document.getElementById("checkin").value;
+  const checkout = document.getElementById("checkout").value;
+  const searchMsg = document.getElementById("searchMsg");
+  const roomCard = document.getElementById("roomCard");
+  const guestCard = document.getElementById("guestCard");
+
+  hideMsg(searchMsg);
+  roomCard.style.display = "none";
+  guestCard.style.display = "none";
+  selectedRoom = null;
+
+  if (!checkin || !checkout) {
+    showMsg(searchMsg, "error", "กรุณาเลือกวันเช็คอินและเช็คเอาท์");
+    return;
+  }
+  if (checkout <= checkin) {
+    showMsg(searchMsg, "error", "วันเช็คเอาท์ต้องอยู่หลังวันเช็คอิน");
+    return;
+  }
+
+  const btn = document.getElementById("btnSearch");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>กำลังตรวจสอบห้องว่าง...';
+
+  try {
+    const url = `${CONFIG.API_URL}?action=checkAvailability&checkin=${checkin}&checkout=${checkout}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.ok) {
+      showMsg(searchMsg, "error", data.message || "เกิดข้อผิดพลาด กรุณาลองใหม่");
+      return;
+    }
+
+    currentCheckin = checkin;
+    currentCheckout = checkout;
+    availableRooms = data.rooms || [];
+    renderRooms();
+    roomCard.style.display = "block";
+
+    if (availableRooms.every(r => r.remaining <= 0)) {
+      showMsg(searchMsg, "info", "ขออภัย ไม่มีห้องว่างในช่วงวันที่เลือก");
+    }
+  } catch (err) {
+    showMsg(searchMsg, "error", "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "ค้นหาห้องว่าง";
+  }
+}
+
+function renderRooms() {
+  const list = document.getElementById("roomList");
+  list.innerHTML = "";
+  availableRooms.forEach(room => {
+    const div = document.createElement("div");
+    const isFull = room.remaining <= 0;
+    div.className = "room-option" + (isFull ? " full" : "");
+    const thumb = room.image
+      ? `<img class="room-thumb" src="${room.image}" alt="${room.name}" onerror="this.style.visibility='hidden'">`
+      : `<div class="room-thumb"></div>`;
+    div.innerHTML = `
+      <div class="room-option-left">
+        ${thumb}
+        <div>
+          <div class="room-name">${room.name}</div>
+          <div class="room-meta">${isFull ? "เต็ม" : "เหลือ " + room.remaining + " ห้อง"}</div>
+        </div>
+      </div>
+      <div class="room-price">${room.price ? room.price.toLocaleString() + " บาท/คืน" : ""}</div>
+    `;
+    if (!isFull) {
+      div.addEventListener("click", () => selectRoom(room, div));
+    }
+    list.appendChild(div);
+  });
+}
+
+function selectRoom(room, el) {
+  document.querySelectorAll(".room-option").forEach(e => e.classList.remove("selected"));
+  el.classList.add("selected");
+  selectedRoom = room;
+  document.getElementById("guestCard").style.display = "block";
+  hideMsg(document.getElementById("confirmMsg"));
+}
+
+document.getElementById("btnConfirm").addEventListener("click", submitBooking);
+
+async function submitBooking() {
+  const confirmMsg = document.getElementById("confirmMsg");
+  hideMsg(confirmMsg);
+
+  const name = document.getElementById("guestName").value.trim();
+  const phone = document.getElementById("guestPhone").value.trim();
+  const guestCount = document.getElementById("guestCount").value;
+  const carCount = document.getElementById("carCount").value;
+  const checkinTime = document.getElementById("checkinTime").value;
+  const note = document.getElementById("guestNote").value.trim();
+
+  if (!selectedRoom) {
+    showMsg(confirmMsg, "error", "กรุณาเลือกห้องพักก่อน");
+    return;
+  }
+  if (!name || !phone) {
+    showMsg(confirmMsg, "error", "กรุณากรอกชื่อและเบอร์โทรให้ครบ");
+    return;
+  }
+  if (!guestCount) {
+    showMsg(confirmMsg, "error", "กรุณาเลือกจำนวนผู้เข้าพัก");
+    return;
+  }
+
+  const btn = document.getElementById("btnConfirm");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>กำลังส่งข้อมูล...';
+
+  try {
+    const res = await fetch(CONFIG.API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" }, // ใช้ text/plain เพื่อเลี่ยงปัญหา CORS preflight ของ Apps Script
+      body: JSON.stringify({
+        action: "submitBooking",
+        checkin: currentCheckin,
+        checkout: currentCheckout,
+        roomId: selectedRoom.id,
+        roomName: selectedRoom.name,
+        guestName: name,
+        guestPhone: phone,
+        guestCount: guestCount,
+        carCount: carCount,
+        checkinTime: checkinTime,
+        note: note,
+        slipBase64: slipBase64,
+        slipMimeType: slipMimeType
+      })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      confirmMsg.className = "msg success";
+      confirmMsg.innerHTML = "จองสำเร็จ! ทางโรงแรมจะติดต่อยืนยันกลับไปที่เบอร์ที่ให้ไว้" +
+        `<br><span class="booking-code">${data.bookingCode}</span>` +
+        "<br>กรุณาบันทึกรหัสนี้ไว้เพื่อใช้ตรวจสอบสถานะการจองภายหลัง";
+      confirmMsg.style.display = "block";
+      btn.textContent = "จองสำเร็จแล้ว";
+      document.getElementById("guestName").disabled = true;
+      document.getElementById("guestPhone").disabled = true;
+      document.getElementById("guestCount").disabled = true;
+      document.getElementById("carCount").disabled = true;
+      document.getElementById("checkinTime").disabled = true;
+      document.getElementById("guestNote").disabled = true;
+      document.getElementById("slipFile").disabled = true;
+    } else if (data.code === "ROOM_JUST_TAKEN") {
+      showMsg(confirmMsg, "error", "ขออภัย ห้องนี้เพิ่งถูกจองไปเมื่อครู่ กรุณาค้นหาและเลือกห้องใหม่อีกครั้ง");
+      btn.disabled = false;
+      btn.textContent = "ยืนยันการจอง";
+      // บังคับให้ค้นหาใหม่เพื่อเอาข้อมูลล่าสุด
+      searchAvailability();
+    } else {
+      showMsg(confirmMsg, "error", data.message || "เกิดข้อผิดพลาด กรุณาลองใหม่");
+      btn.disabled = false;
+      btn.textContent = "ยืนยันการจอง";
+    }
+  } catch (err) {
+    showMsg(confirmMsg, "error", "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    btn.disabled = false;
+    btn.textContent = "ยืนยันการจอง";
+  }
+}
+
+/* ===== ตรวจสอบการจองของฉัน ===== */
+document.getElementById("btnMyBooking").addEventListener("click", checkMyBooking);
+
+async function checkMyBooking() {
+  const myMsg = document.getElementById("myMsg");
+  const myResults = document.getElementById("myResults");
+  hideMsg(myMsg);
+  myResults.innerHTML = "";
+
+  const phone = document.getElementById("myPhone").value.trim();
+  const code = document.getElementById("myCode").value.trim();
+
+  if (!phone || !code) {
+    showMsg(myMsg, "error", "กรุณากรอกเบอร์โทรและรหัสการจอง");
+    return;
+  }
+
+  const btn = document.getElementById("btnMyBooking");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>กำลังตรวจสอบ...';
+
+  try {
+    const url = `${CONFIG.API_URL}?action=myBooking&phone=${encodeURIComponent(phone)}&code=${encodeURIComponent(code)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.ok) {
+      showMsg(myMsg, "error", data.message || "ไม่พบข้อมูลการจอง");
+      return;
+    }
+
+    data.bookings.forEach(b => {
+      const div = document.createElement("div");
+      div.className = "my-booking-item";
+      div.innerHTML = `
+        <div class="room-name">${b.roomName}</div>
+        <div class="room-meta">เช็คอิน ${b.checkin} — เช็คเอาท์ ${b.checkout}</div>
+        <div class="room-meta">ผู้เข้าพัก ${b.guestCount || "-"} คน · รถ ${b.carCount || "-"} คัน · เวลาเข้าพัก ${b.checkinTime || "-"}</div>
+        ${b.note ? `<div class="room-meta">หมายเหตุ: ${b.note}</div>` : ""}
+        <div class="status">${b.status}</div>
+      `;
+      myResults.appendChild(div);
+    });
+  } catch (err) {
+    showMsg(myMsg, "error", "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "ตรวจสอบการจอง";
+  }
+}
+</script>
+
+</body>
+</html>
