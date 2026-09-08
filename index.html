@@ -207,6 +207,92 @@
     font-size: 11px;
     letter-spacing: 0.04em;
   }
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    cursor: pointer;
+  }
+  .checkbox-row input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+  }
+  .checkbox-row span {
+    font-size: 13px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--text);
+  }
+  .price-summary {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--accent-soft);
+    border-radius: 3px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--accent-dark);
+  }
+  .price-summary .price-total {
+    font-weight: 600;
+    font-size: 15px;
+    margin-top: 4px;
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+  }
+  .bank-card {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .bank-card-title {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .bank-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 13px;
+  }
+  .bank-row:last-of-type { border-bottom: none; }
+  .bank-label { color: var(--muted); white-space: nowrap; }
+  .bank-value { font-weight: 600; color: var(--text); text-align: right; }
+  .bank-account-number { font-family: "Cormorant Garamond", serif; font-size: 19px; letter-spacing: 0.06em; }
+  .copy-btn {
+    width: auto;
+    display: inline-block;
+    margin-top: 12px;
+    padding: 7px 14px;
+    background: var(--card);
+    color: var(--accent-dark);
+    border: 1px solid var(--accent);
+    font-size: 11px;
+  }
+  .copy-btn:active:not(:disabled) { background: var(--accent-soft); }
+  .secondary-btn {
+    background: transparent;
+    color: var(--accent-dark);
+    border: 1px solid var(--border);
+    margin-top: 10px;
+  }
+  .secondary-btn:active:not(:disabled) { background: var(--accent-soft); }
+  .step-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
 </style>
 </head>
 <body>
@@ -244,6 +330,8 @@
   </div>
 
   <div class="card" id="guestCard" style="display:none;">
+    <div class="step-label">ขั้นตอนที่ 1 — ข้อมูลผู้จอง</div>
+
     <label for="guestName">ชื่อผู้จอง</label>
     <input type="text" id="guestName" placeholder="ชื่อ-นามสกุล" />
 
@@ -265,11 +353,41 @@
       </div>
     </div>
 
-    <label for="checkinTime">เวลาเข้าที่พัก</label>
-    <input type="time" id="checkinTime" />
+    <label class="checkbox-row" for="extraBedCheck" style="margin-top:14px; margin-bottom:0;">
+      <input type="checkbox" id="extraBedCheck" />
+      <span id="extraBedLabel">ต้องการเตียงเสริม (พักได้เพิ่มเป็น 3 คน)</span>
+    </label>
+
+    <label for="checkinTime">เวลาเข้าที่พัก (ปกติ 14:00 น.)</label>
+    <input type="time" id="checkinTime" value="14:00" min="14:00" />
+
+    <label class="checkbox-row" for="earlyCheckinCheck" style="margin-top:10px; margin-bottom:0;">
+      <input type="checkbox" id="earlyCheckinCheck" />
+      <span>รับบริการ Early Check-in (เข้าก่อน 14:00 น. คิดเพิ่มชั่วโมงละ 100 บาท)</span>
+    </label>
+    <div class="hint">ครึ่งชั่วโมงคิด 50 บาท ปัดตามเวลาจริงใกล้สุด</div>
+
+    <div class="price-summary" id="priceSummary" style="display:none;"></div>
 
     <label for="guestNote">หมายเหตุ (ถ้ามี)</label>
     <input type="text" id="guestNote" placeholder="เช่น ความต้องการพิเศษ" />
+
+    <button id="btnGoPayment" type="button">ถัดไป: สรุปยอด &amp; ชำระเงิน</button>
+    <div id="guestFormMsg" class="msg"></div>
+  </div>
+
+  <div class="card" id="paymentCard" style="display:none;">
+    <div class="step-label">ขั้นตอนที่ 2 — สรุปยอด &amp; ชำระเงิน</div>
+
+    <div class="price-summary" id="orderSummary" style="display:block;"></div>
+
+    <div class="bank-card" id="bankCard">
+      <div class="bank-card-title">โอนเงินมาที่บัญชี</div>
+      <div class="bank-row"><span class="bank-label">ธนาคาร</span><span class="bank-value">กสิกรไทย</span></div>
+      <div class="bank-row"><span class="bank-label">เลขบัญชี</span><span class="bank-value bank-account-number" id="bankAccountNumber">232-3-77627-2</span></div>
+      <div class="bank-row"><span class="bank-label">ชื่อบัญชี</span><span class="bank-value">THE HUMBLE HOUSE Ltd.,Part.</span></div>
+      <button type="button" id="btnCopyAccount" class="copy-btn">คัดลอกเลขบัญชี</button>
+    </div>
 
     <label for="slipFile">แนบสลิปโอนเงิน (ถ้าชำระแล้ว)</label>
     <input type="file" id="slipFile" accept="image/*" />
@@ -277,6 +395,7 @@
     <img id="slipPreview" style="display:none; max-width:100%; margin-top:8px; border-radius:4px; border:1px solid var(--border);" />
 
     <button id="btnConfirm" type="button">ยืนยันการจอง</button>
+    <button id="btnBackToGuest" type="button" class="secondary-btn">ย้อนกลับแก้ไขข้อมูล</button>
     <div id="confirmMsg" class="msg"></div>
   </div>
 
@@ -321,15 +440,54 @@ let currentCheckin = "";
 let currentCheckout = "";
 let slipBase64 = "";
 let slipMimeType = "";
+let defaultCheckinTime = "14:00";
+let earlyCheckinFeePerHalfHour = 50;
 
-/* ===== เติมตัวเลือกจำนวนผู้เข้าพัก / จำนวนรถ ===== */
-(function populateSelects() {
+/**
+ * คำนวณค่า Early Check-in ฝั่งหน้าเว็บ (แสดงผลให้ลูกค้าดูก่อน — ยอดจริงคำนวณซ้ำที่ฝั่งเซิร์ฟเวอร์อีกที)
+ * กติกา: นับชั่วโมงเต็มก่อน (ชม.ละ 100 บาท) เศษนาทีที่เหลือ <30 นาที คิดเพิ่ม 50 บาท, ตั้งแต่ 30 นาทีขึ้นไปคิดเพิ่มเต็มชั่วโมง (100 บาท)
+ */
+function computeEarlyCheckinFee(timeStr, earlyChecked) {
+  if (!earlyChecked || !timeStr) return 0;
+  const parts = timeStr.split(":");
+  if (parts.length < 2) return 0;
+  const minutesFromMidnight = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+  const defaultParts = defaultCheckinTime.split(":");
+  const defaultMinutes = parseInt(defaultParts[0], 10) * 60 + parseInt(defaultParts[1], 10);
+  if (isNaN(minutesFromMidnight) || minutesFromMidnight >= defaultMinutes) return 0;
+  const earlyMinutes = defaultMinutes - minutesFromMidnight;
+  const fullHours = Math.floor(earlyMinutes / 60);
+  const remainderMinutes = earlyMinutes % 60;
+  const remainderBlocks = remainderMinutes === 0 ? 0 : (remainderMinutes < 30 ? 1 : 2);
+  const halfHourBlocks = fullHours * 2 + remainderBlocks;
+  return halfHourBlocks * earlyCheckinFeePerHalfHour;
+}
+
+/* ===== เติมตัวเลือกจำนวนผู้เข้าพัก / จำนวนรถ =====
+   จำนวนผู้เข้าพัก: ปกติเลือกได้สูงสุดตาม room.maxGuests (ปกติ 2 คน)
+   ถ้าติ๊ก "ต้องการเตียงเสริม" จะปลดล็อกให้เลือกเพิ่มได้อีก 1 คน (ดู updateGuestCountOptions) */
+function updateGuestCountOptions() {
   const guestSel = document.getElementById("guestCount");
-  for (let i = 1; i <= 10; i++) {
+  const maxGuests = selectedRoom ? (selectedRoom.maxGuests || 2) : 2;
+  const extraBedChecked = document.getElementById("extraBedCheck").checked;
+  const max = extraBedChecked ? maxGuests + 1 : maxGuests;
+
+  const prevValue = guestSel.value;
+  guestSel.innerHTML = "";
+  const emptyOpt = document.createElement("option");
+  emptyOpt.value = ""; emptyOpt.textContent = "เลือก";
+  guestSel.appendChild(emptyOpt);
+  for (let i = 1; i <= max; i++) {
     const opt = document.createElement("option");
     opt.value = i; opt.textContent = i + " คน";
     guestSel.appendChild(opt);
   }
+  // ถ้าค่าที่เลือกไว้เดิมยังอยู่ในช่วงที่เลือกได้ ให้คงค่าเดิมไว้ ไม่งั้นรีเซ็ตเป็นค่าว่าง
+  guestSel.value = (prevValue && Number(prevValue) <= max) ? prevValue : "";
+}
+
+(function populateSelects() {
+  updateGuestCountOptions();
   const carSel = document.getElementById("carCount");
   for (let i = 0; i <= 5; i++) {
     const opt = document.createElement("option");
@@ -337,6 +495,78 @@ let slipMimeType = "";
     carSel.appendChild(opt);
   }
 })();
+
+document.getElementById("extraBedCheck").addEventListener("change", () => {
+  updateGuestCountOptions();
+  updateExtraBedLabel();
+  updatePriceSummary();
+});
+document.getElementById("guestCount").addEventListener("change", updatePriceSummary);
+
+/* ===== Early Check-in: ปกติเข้าได้ตั้งแต่ 14:00 น. ต้องติ๊กยินยอมก่อนถึงเลือกเวลาก่อนหน้านั้นได้ ===== */
+document.getElementById("earlyCheckinCheck").addEventListener("change", (e) => {
+  const timeInput = document.getElementById("checkinTime");
+  if (e.target.checked) {
+    timeInput.removeAttribute("min");
+  } else {
+    timeInput.min = defaultCheckinTime;
+    if (timeInput.value && timeInput.value < defaultCheckinTime) {
+      timeInput.value = defaultCheckinTime;
+    }
+  }
+  updatePriceSummary();
+});
+document.getElementById("checkinTime").addEventListener("change", () => {
+  const earlyChecked = document.getElementById("earlyCheckinCheck").checked;
+  const timeInput = document.getElementById("checkinTime");
+  // กันกรณีเบราว์เซอร์บางตัวไม่บังคับ min ให้ (เช่น พิมพ์เอง) — ถ้ายังไม่ติ๊ก early check-in ให้ดึงกลับเป็นเวลาปกติ
+  if (!earlyChecked && timeInput.value && timeInput.value < defaultCheckinTime) {
+    timeInput.value = defaultCheckinTime;
+  }
+  updatePriceSummary();
+});
+
+function updateExtraBedLabel() {
+  const label = document.getElementById("extraBedLabel");
+  if (selectedRoom && selectedRoom.extraBedPrice) {
+    label.textContent = `ต้องการเตียงเสริม (+${selectedRoom.extraBedPrice.toLocaleString()} บาท/คืน — พักได้เพิ่มเป็น ${(selectedRoom.maxGuests || 2) + 1} คน)`;
+  } else {
+    label.textContent = "ต้องการเตียงเสริม (พักได้เพิ่มขึ้นอีก 1 คน)";
+  }
+}
+
+function nightsBetween(checkinStr, checkoutStr) {
+  const d1 = new Date(checkinStr + "T00:00:00");
+  const d2 = new Date(checkoutStr + "T00:00:00");
+  return Math.max(Math.round((d2 - d1) / (1000 * 60 * 60 * 24)), 1);
+}
+
+function updatePriceSummary() {
+  const box = document.getElementById("priceSummary");
+  if (!selectedRoom || !currentCheckin || !currentCheckout) {
+    box.style.display = "none";
+    return;
+  }
+  const nights = nightsBetween(currentCheckin, currentCheckout);
+  const roomTotal = selectedRoom.price * nights;
+  const extraBedChecked = document.getElementById("extraBedCheck").checked;
+  const extraBedFee = extraBedChecked ? (selectedRoom.extraBedPrice || 0) * nights : 0;
+  const earlyChecked = document.getElementById("earlyCheckinCheck").checked;
+  const checkinTimeVal = document.getElementById("checkinTime").value;
+  const earlyFee = computeEarlyCheckinFee(checkinTimeVal, earlyChecked);
+  const total = roomTotal + extraBedFee + earlyFee;
+
+  let html = `<div>ค่าห้อง: ${selectedRoom.price.toLocaleString()} บาท × ${nights} คืน = ${roomTotal.toLocaleString()} บาท</div>`;
+  if (extraBedChecked) {
+    html += `<div>เตียงเสริม: ${(selectedRoom.extraBedPrice || 0).toLocaleString()} บาท × ${nights} คืน = ${extraBedFee.toLocaleString()} บาท</div>`;
+  }
+  if (earlyChecked && earlyFee > 0) {
+    html += `<div>Early Check-in: ${earlyFee.toLocaleString()} บาท</div>`;
+  }
+  html += `<div class="price-total">รวมทั้งหมด: ${total.toLocaleString()} บาท</div>`;
+  box.innerHTML = html;
+  box.style.display = "block";
+}
 
 /* ===== สลับแท็บ "จองห้องพัก" / "ตรวจสอบการจองของฉัน" ===== */
 document.getElementById("tabBtnBook").addEventListener("click", () => switchTab("book"));
@@ -411,10 +641,12 @@ async function searchAvailability() {
   const searchMsg = document.getElementById("searchMsg");
   const roomCard = document.getElementById("roomCard");
   const guestCard = document.getElementById("guestCard");
+  const paymentCard = document.getElementById("paymentCard");
 
   hideMsg(searchMsg);
   roomCard.style.display = "none";
   guestCard.style.display = "none";
+  paymentCard.style.display = "none";
   selectedRoom = null;
 
   if (!checkin || !checkout) {
@@ -443,6 +675,9 @@ async function searchAvailability() {
     currentCheckin = checkin;
     currentCheckout = checkout;
     availableRooms = data.rooms || [];
+    if (data.defaultCheckinTime) defaultCheckinTime = data.defaultCheckinTime;
+    if (data.earlyCheckinFeePerHalfHour) earlyCheckinFeePerHalfHour = data.earlyCheckinFeePerHalfHour;
+    document.getElementById("checkinTime").min = defaultCheckinTime;
     renderRooms();
     roomCard.style.display = "block";
 
@@ -488,9 +723,95 @@ function selectRoom(room, el) {
   document.querySelectorAll(".room-option").forEach(e => e.classList.remove("selected"));
   el.classList.add("selected");
   selectedRoom = room;
+  document.getElementById("extraBedCheck").checked = false;
+  document.getElementById("earlyCheckinCheck").checked = false;
+  document.getElementById("checkinTime").min = defaultCheckinTime;
+  document.getElementById("checkinTime").value = defaultCheckinTime;
+  updateExtraBedLabel();
+  updateGuestCountOptions();
+  updatePriceSummary();
   document.getElementById("guestCard").style.display = "block";
+  document.getElementById("paymentCard").style.display = "none";
+  hideMsg(document.getElementById("guestFormMsg"));
   hideMsg(document.getElementById("confirmMsg"));
 }
+
+/* ===== ขั้นตอนที่ 1 -> 2: ตรวจข้อมูลผู้จอง แล้วไปหน้าสรุปยอด/ชำระเงิน ===== */
+document.getElementById("btnGoPayment").addEventListener("click", goToPayment);
+
+function goToPayment() {
+  const msg = document.getElementById("guestFormMsg");
+  hideMsg(msg);
+
+  const name = document.getElementById("guestName").value.trim();
+  const phone = document.getElementById("guestPhone").value.trim();
+  const guestCount = document.getElementById("guestCount").value;
+
+  if (!selectedRoom) {
+    showMsg(msg, "error", "กรุณาเลือกห้องพักก่อน");
+    return;
+  }
+  if (!name || !phone) {
+    showMsg(msg, "error", "กรุณากรอกชื่อและเบอร์โทรให้ครบ");
+    return;
+  }
+  if (!guestCount) {
+    showMsg(msg, "error", "กรุณาเลือกจำนวนผู้เข้าพัก");
+    return;
+  }
+
+  renderOrderSummary();
+  document.getElementById("guestCard").style.display = "none";
+  document.getElementById("paymentCard").style.display = "block";
+  hideMsg(document.getElementById("confirmMsg"));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderOrderSummary() {
+  const box = document.getElementById("orderSummary");
+  const nights = nightsBetween(currentCheckin, currentCheckout);
+  const roomTotal = selectedRoom.price * nights;
+  const extraBedChecked = document.getElementById("extraBedCheck").checked;
+  const extraBedFee = extraBedChecked ? (selectedRoom.extraBedPrice || 0) * nights : 0;
+  const earlyChecked = document.getElementById("earlyCheckinCheck").checked;
+  const checkinTime = document.getElementById("checkinTime").value;
+  const earlyFee = computeEarlyCheckinFee(checkinTime, earlyChecked);
+  const total = roomTotal + extraBedFee + earlyFee;
+  const guestCount = document.getElementById("guestCount").value;
+  const carCount = document.getElementById("carCount").value;
+
+  let html =
+    `<div>ห้อง: <strong>${selectedRoom.name}</strong></div>` +
+    `<div>เช็คอิน ${currentCheckin} — เช็คเอาท์ ${currentCheckout} (${nights} คืน)</div>` +
+    `<div>ผู้เข้าพัก ${guestCount || "-"} คน · รถ ${carCount || "-"} คัน${checkinTime ? " · เข้าพักเวลา " + checkinTime : ""}</div>` +
+    `<div style="margin-top:8px;">ค่าห้อง: ${selectedRoom.price.toLocaleString()} บาท × ${nights} คืน = ${roomTotal.toLocaleString()} บาท</div>`;
+  if (extraBedChecked) {
+    html += `<div>เตียงเสริม: ${(selectedRoom.extraBedPrice || 0).toLocaleString()} บาท × ${nights} คืน = ${extraBedFee.toLocaleString()} บาท</div>`;
+  }
+  if (earlyChecked && earlyFee > 0) {
+    html += `<div>Early Check-in: ${earlyFee.toLocaleString()} บาท</div>`;
+  }
+  html += `<div class="price-total">ยอดรวมทั้งหมด: ${total.toLocaleString()} บาท</div>`;
+  box.innerHTML = html;
+}
+
+document.getElementById("btnBackToGuest").addEventListener("click", () => {
+  document.getElementById("paymentCard").style.display = "none";
+  document.getElementById("guestCard").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("btnCopyAccount").addEventListener("click", async () => {
+  const btn = document.getElementById("btnCopyAccount");
+  const number = document.getElementById("bankAccountNumber").textContent.trim();
+  try {
+    await navigator.clipboard.writeText(number);
+    btn.textContent = "คัดลอกแล้ว ✓";
+  } catch (err) {
+    btn.textContent = "เลขบัญชี: " + number;
+  }
+  setTimeout(() => { btn.textContent = "คัดลอกเลขบัญชี"; }, 2000);
+});
 
 document.getElementById("btnConfirm").addEventListener("click", submitBooking);
 
@@ -504,6 +825,8 @@ async function submitBooking() {
   const carCount = document.getElementById("carCount").value;
   const checkinTime = document.getElementById("checkinTime").value;
   const note = document.getElementById("guestNote").value.trim();
+  const extraBed = document.getElementById("extraBedCheck").checked;
+  const earlyCheckin = document.getElementById("earlyCheckinCheck").checked;
 
   if (!selectedRoom) {
     showMsg(confirmMsg, "error", "กรุณาเลือกห้องพักก่อน");
@@ -538,6 +861,8 @@ async function submitBooking() {
         carCount: carCount,
         checkinTime: checkinTime,
         note: note,
+        extraBed: extraBed,
+        earlyCheckin: earlyCheckin,
         slipBase64: slipBase64,
         slipMimeType: slipMimeType
       })
@@ -548,6 +873,7 @@ async function submitBooking() {
       confirmMsg.className = "msg success";
       confirmMsg.innerHTML = "จองสำเร็จ! ทางโรงแรมจะติดต่อยืนยันกลับไปที่เบอร์ที่ให้ไว้" +
         `<br><span class="booking-code">${data.bookingCode}</span>` +
+        (data.totalPrice ? `<br>ยอดรวมทั้งหมด: ${data.totalPrice.toLocaleString()} บาท (${data.nights} คืน)` : "") +
         "<br>กรุณาบันทึกรหัสนี้ไว้เพื่อใช้ตรวจสอบสถานะการจองภายหลัง";
       confirmMsg.style.display = "block";
       btn.textContent = "จองสำเร็จแล้ว";
@@ -555,9 +881,12 @@ async function submitBooking() {
       document.getElementById("guestPhone").disabled = true;
       document.getElementById("guestCount").disabled = true;
       document.getElementById("carCount").disabled = true;
+      document.getElementById("extraBedCheck").disabled = true;
+      document.getElementById("earlyCheckinCheck").disabled = true;
       document.getElementById("checkinTime").disabled = true;
       document.getElementById("guestNote").disabled = true;
       document.getElementById("slipFile").disabled = true;
+      document.getElementById("btnBackToGuest").disabled = true;
     } else if (data.code === "ROOM_JUST_TAKEN") {
       showMsg(confirmMsg, "error", "ขออภัย ห้องนี้เพิ่งถูกจองไปเมื่อครู่ กรุณาค้นหาและเลือกห้องใหม่อีกครั้ง");
       btn.disabled = false;
@@ -614,6 +943,9 @@ async function checkMyBooking() {
         <div class="room-name">${b.roomName}</div>
         <div class="room-meta">เช็คอิน ${b.checkin} — เช็คเอาท์ ${b.checkout}</div>
         <div class="room-meta">ผู้เข้าพัก ${b.guestCount || "-"} คน · รถ ${b.carCount || "-"} คัน · เวลาเข้าพัก ${b.checkinTime || "-"}</div>
+        <div class="room-meta">เตียงเสริม: ${b.extraBed || "ไม่มี"}</div>
+        ${b.earlyCheckinFee ? `<div class="room-meta">Early Check-in: ${Number(b.earlyCheckinFee).toLocaleString()} บาท</div>` : ""}
+        ${b.totalPrice ? `<div class="room-meta">ยอดรวม: ${Number(b.totalPrice).toLocaleString()} บาท</div>` : ""}
         ${b.note ? `<div class="room-meta">หมายเหตุ: ${b.note}</div>` : ""}
         <div class="status">${b.status}</div>
       `;
