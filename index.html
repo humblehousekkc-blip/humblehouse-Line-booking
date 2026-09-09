@@ -941,6 +941,7 @@ async function checkMyBooking() {
       div.className = "my-booking-item";
       div.innerHTML = `
         <div class="room-name">${b.roomName}</div>
+        <div class="room-meta">ผู้จอง: ${b.guestName || "-"} · รหัสจอง: ${b.bookingCode}</div>
         <div class="room-meta">เช็คอิน ${b.checkin} — เช็คเอาท์ ${b.checkout}</div>
         <div class="room-meta">ผู้เข้าพัก ${b.guestCount || "-"} คน · รถ ${b.carCount || "-"} คัน · เวลาเข้าพัก ${b.checkinTime || "-"}</div>
         <div class="room-meta">เตียงเสริม: ${b.extraBed || "ไม่มี"}</div>
