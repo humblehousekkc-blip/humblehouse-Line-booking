@@ -6,136 +6,368 @@
 <title>จองห้องพัก</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* ===== Mood & tone: เอสเพรสโซ่น้ำตาลเข้ม + ครีม แบบ editorial minimal ===== */
+  /* ===== Humble House brand system: Earth / Woodlands / Sand / Pastel Brown (Design guideline) ===== */
   :root {
-    --header-bg: #362419;      /* น้ำตาลเข้มแบบปกหนังสือ */
-    --header-text: #EFE7DA;    /* ครีมอ่อนบนพื้นเข้ม */
-    --accent: #5B4531;         /* น้ำตาลกลาง ใช้กับปุ่ม/state ที่เลือก */
-    --accent-dark: #40301F;    /* น้ำตาลเข้ม ใช้ตอน active/hover */
-    --accent-soft: #ECE3D3;    /* ครีมอ่อน ใช้เป็นพื้น state ที่เลือก */
-    --bg: #F1E9DC;             /* พื้นหลังหน้าเว็บ ครีมอุ่น */
-    --card: #FBF8F2;           /* พื้นการ์ด ครีมเกือบขาว */
-    --text: #2B2118;           /* ตัวอักษรหลัก น้ำตาลเข้มเกือบดำ */
-    --muted: #8C7D6A;          /* ตัวอักษรรอง น้ำตาล-เทาอุ่น */
-    --danger: #A8442E;         /* แดงอิฐ เข้ากับโทน แทนสีแดงจัด */
-    --border: #DED2BD;         /* เส้นขอบครีมเข้ม */
+    --earth: #A95F44;          /* สีหลักของแบรนด์ - ใช้กับปุ่มหลัก/state ที่เลือก */
+    --earth-dark: #7C4531;     /* Earth เข้มขึ้น ใช้ตอน active/hover */
+    --woodlands: #656843;      /* เขียวมะกอก ใช้แทนสถานะ "ยืนยันแล้ว" / positive */
+    --sand: #DEC2A5;           /* ครีมทราย ใช้เป็นพื้น state ที่เลือก/soft */
+    --pastel-brown: #937F73;   /* น้ำตาล-เทาอุ่น ใช้เป็นตัวอักษรรอง */
+    --header-bg: #33291F;      /* น้ำตาลเข้มแบบปกหนังสือ (โทน Woodlands เข้ม) */
+    --header-bg-2: #4A3A28;    /* ไล่เฉดกับ header-bg */
+    --header-text: #F3ECE1;    /* ครีมอ่อนบนพื้นเข้ม */
+    --accent: var(--earth);
+    --accent-dark: var(--earth-dark);
+    --accent-soft: #F0E1D6;    /* Sand โทนอ่อน ใช้เป็นพื้น state ที่เลือก */
+    --bg: #F7F1E7;             /* พื้นหลังหน้าเว็บ - Sand โทนอ่อนมาก */
+    --card: #FDFBF7;           /* พื้นการ์ด ครีมเกือบขาว */
+    --text: #2B2420;           /* ตัวอักษรหลัก น้ำตาลเข้มเกือบดำ */
+    --muted: var(--pastel-brown);
+    --danger: #9C4A36;         /* แดงอิฐกลืนโทน Earth แทนสีแดงจัด */
+    --success: var(--woodlands);
+    --success-soft: #E4E5D9;
+    --danger-soft: #F1E1DA;
+    --border: #E3D5C2;         /* เส้นขอบครีมเข้ม */
+    --radius-lg: 14px;
+    --radius-md: 9px;
+    --radius-sm: 6px;
+    --shadow-sm: 0 1px 2px rgba(43,33,24,0.05), 0 2px 6px rgba(43,33,24,0.05);
+    --shadow-md: 0 6px 20px rgba(43,33,24,0.09);
+    --shadow-lift: 0 10px 26px rgba(43,33,24,0.16);
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: "Jost", "Noto Sans Thai", sans-serif;
+    font-family: "Montserrat", "Noto Sans Thai", sans-serif;
+    font-weight: 300;
     background: var(--bg);
     color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
+  .icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; vertical-align: -2.5px; margin-right: 5px; flex-shrink: 0; }
+  .icon-lg { width: 16px; height: 16px; stroke-width: 1.6; }
   header {
-    background: var(--header-bg);
-    color: var(--header-text);
-    padding: 32px 16px 28px;
+    background: var(--card);
+    color: var(--text);
+    padding: 34px 16px 26px;
     text-align: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  header .brand-mark {
+    width: 200px;
+    height: auto;
+    margin: 0 auto 16px;
+    display: block;
+    opacity: 0.95;
+  }
+  .lang-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .lang-btn {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    padding: 5px 11px;
+    cursor: pointer;
+    margin-top: 0;
+    box-shadow: none;
+    width: auto;
+  }
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--header-text);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
   }
   header .eyebrow {
-    font-family: "Jost", sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.25em;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    opacity: 0.65;
-    margin-bottom: 8px;
-  }
-  header h1 {
+    color: var(--muted);
     margin: 0;
-    font-family: "Cormorant Garamond", "Noto Sans Thai", serif;
-    font-weight: 600;
-    font-size: 30px;
-    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
-  header p { margin: 8px 0 0; font-size: 12px; letter-spacing: 0.08em; opacity: 0.75; text-transform: uppercase; }
   main {
     max-width: 480px;
     margin: 0 auto;
-    padding: 16px;
+    padding: 18px 16px 8px;
   }
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px;
-    margin-bottom: 16px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    margin-bottom: 18px;
   }
   label {
     display: block;
-    font-size: 11px;
+    font-size: 14px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 6px;
-    margin-top: 14px;
+    margin-top: 16px;
   }
   label:first-child { margin-top: 0; }
   input, select {
     width: 100%;
-    padding: 10px 12px;
+    padding: 11px 13px;
     border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 15px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
     font-family: inherit;
     background: #fff;
     color: var(--text);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(169,95,68,0.16);
   }
   .row { display: flex; gap: 10px; }
   .row > div { flex: 1; }
   button {
     width: 100%;
-    padding: 13px;
+    padding: 14px;
     border: none;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     background: var(--accent);
     color: var(--header-text);
-    font-family: "Jost", sans-serif;
-    font-size: 13px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     cursor: pointer;
-    margin-top: 18px;
+    margin-top: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   }
-  button:disabled { background: #C9BBA4; cursor: not-allowed; }
-  button:active:not(:disabled) { background: var(--accent-dark); }
-  .room-list { margin-top: 12px; }
+  button:hover:not(:disabled) { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  button:disabled { background: #D8C9B8; cursor: not-allowed; box-shadow: none; }
+  button:active:not(:disabled) { background: var(--accent-dark); transform: translateY(0); box-shadow: var(--shadow-sm); }
+  .room-list { margin-top: 14px; display: flex; flex-direction: column; gap: 12px; }
   .room-option {
     border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 14px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border-radius: var(--radius-md);
+    overflow: hidden;
     cursor: pointer;
     background: #fff;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    position: relative;
   }
+  .room-option:hover:not(.full) { box-shadow: var(--shadow-md); transform: translateY(-2px); }
   .room-option.selected {
     border-color: var(--accent);
-    background: var(--accent-soft);
+    box-shadow: 0 0 0 2px var(--accent), var(--shadow-md);
   }
   .room-option.full {
-    opacity: 0.45;
+    opacity: 0.5;
     cursor: not-allowed;
   }
-  .room-name { font-weight: 600; font-size: 15px; font-family: "Cormorant Garamond", serif; }
-  .room-meta { font-size: 11px; letter-spacing: 0.04em; color: var(--muted); margin-top: 3px; text-transform: uppercase; }
-  .room-price { font-weight: 600; color: var(--accent-dark); white-space: nowrap; font-family: "Cormorant Garamond", serif; font-size: 16px; }
+  .room-option-media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, var(--accent-soft), #E4D7BF);
+    position: relative;
+    overflow: hidden;
+  }
+  .room-option .room-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 38%;
+    display: block;
+  }
+  .room-option-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--accent);
+    color: var(--header-text);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .room-gallery-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(43,33,24,0.62);
+    color: #fff;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+    transition: background 0.15s ease;
+  }
+  .room-gallery-btn:hover { background: rgba(43,33,24,0.8); }
+  .room-gallery-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
+  /* ===== Lightbox: แกลเลอรีรูปห้องพัก ===== */
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,15,10,0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .lightbox-overlay.open { display: flex; }
+  .lightbox-header {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    color: var(--header-text);
+    box-sizing: border-box;
+  }
+  .lightbox-title { font-family: "Montserrat", sans-serif; font-weight: 500; font-size: 14px; letter-spacing: 0.02em; }
+  .lightbox-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(239,231,218,0.35);
+    background: rgba(255,255,255,0.06);
+    color: var(--header-text);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+  .lightbox-stage {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    touch-action: pan-y;
+  }
+  .lightbox-stage img {
+    max-width: 92%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lift);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0;
+  }
+  .lightbox-nav:hover { background: rgba(255,255,255,0.22); }
+  .lightbox-nav.prev { left: 8px; }
+  .lightbox-nav.next { right: 8px; }
+  .lightbox-dots {
+    display: flex;
+    gap: 6px;
+    padding: 16px 0 28px;
+  }
+  .lightbox-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(239,231,218,0.35);
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .lightbox-dot.active { background: var(--header-text); transform: scale(1.3); }
+  .room-option-body { padding: 14px 16px 16px; }
+  .room-option-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .room-name { font-weight: 700; font-size: 14px; font-family: "Montserrat", sans-serif; }
+  .room-meta { font-size: 14px; letter-spacing: 0.04em; color: var(--muted); margin-top: 4px; text-transform: uppercase; }
+  .room-price { font-weight: 700; color: var(--accent-dark); white-space: nowrap; font-family: "Montserrat", sans-serif; font-size: 14px; }
+  .room-specs {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .room-spec-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .room-spec-line .icon { margin-top: 1px; color: var(--muted); flex-shrink: 0; }
+  .room-spec-amenities { color: var(--muted); }
+  .room-spec-note { color: var(--muted); }
   .msg {
-    padding: 10px 12px;
-    border-radius: 3px;
-    font-size: 13px;
+    padding: 11px 13px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    line-height: 1.6;
     margin-top: 12px;
     display: none;
   }
-  .msg.error { background: #F3E4DE; color: var(--danger); display: block; }
+  .msg.error { background: var(--danger-soft); color: var(--danger); display: block; }
   .msg.success { background: var(--accent-soft); color: var(--accent-dark); display: block; }
-  .msg.info { background: #EFE9DC; color: var(--muted); display: block; }
-  .hint { font-size: 11px; color: var(--muted); margin-top: 6px; letter-spacing: 0.02em; }
+  .msg.info { background: var(--accent-soft); color: var(--muted); display: block; }
+  .hint { font-size: 14px; color: var(--muted); margin-top: 6px; letter-spacing: 0.02em; }
   .spinner {
     display: inline-block;
     width: 14px; height: 14px;
@@ -149,204 +381,254 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   footer {
     text-align: center;
-    font-size: 10px;
-    letter-spacing: 0.05em;
+    font-size: 14px;
+    letter-spacing: 0.06em;
     color: var(--muted);
-    padding: 24px 16px 34px;
+    padding: 26px 16px 38px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
   }
-  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 18px; }
   .tab-btn {
     flex: 1;
-    padding: 11px 6px;
+    padding: 12px 6px;
     border: 1px solid var(--border);
     background: var(--card);
     color: var(--muted);
-    border-radius: 3px;
-    font-family: "Jost", sans-serif;
-    font-size: 11px;
+    border-radius: var(--radius-sm);
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
     margin-top: 0;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
   }
-  .tab-btn.active { background: var(--accent); color: var(--header-text); border-color: var(--accent); }
-  .room-option .room-thumb {
-    width: 52px; height: 52px;
-    border-radius: 3px;
-    object-fit: cover;
-    background: var(--accent-soft);
-    margin-right: 12px;
-    flex-shrink: 0;
-  }
-  .room-option-left { display: flex; align-items: center; }
+  .tab-btn.active { background: var(--accent); color: var(--header-text); border-color: var(--accent); box-shadow: var(--shadow-md); }
   .booking-code {
+    font-weight: 700;
     display: inline-block;
-    margin-top: 6px;
-    padding: 6px 10px;
+    margin-top: 8px;
+    padding: 8px 14px;
     background: var(--accent-dark);
     color: var(--header-text);
-    font-family: "Cormorant Garamond", serif;
-    font-size: 18px;
-    letter-spacing: 0.12em;
-    border-radius: 3px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
   }
   .my-booking-item {
     border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 14px;
+    border-radius: var(--radius-md);
+    padding: 16px;
     margin-top: 12px;
     background: #fff;
+    box-shadow: var(--shadow-sm);
   }
   .my-booking-item .status {
     display: inline-block;
-    margin-top: 6px;
-    padding: 3px 10px;
+    margin-top: 8px;
+    padding: 4px 12px;
     border-radius: 20px;
     background: var(--accent-soft);
     color: var(--accent-dark);
-    font-size: 11px;
+    font-size: 14px;
     letter-spacing: 0.04em;
+    font-weight: 500;
   }
+  .my-booking-item .status.status-confirmed { background: var(--success-soft); color: var(--success); }
+  .my-booking-item .status.status-cancelled { background: var(--danger-soft); color: var(--danger); }
   .checkbox-row {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 9px;
     margin-top: 14px;
     cursor: pointer;
   }
   .checkbox-row input[type="checkbox"] {
     width: auto;
-    margin: 0;
+    margin: 2px 0 0;
+    accent-color: var(--accent);
+    flex-shrink: 0;
   }
   .checkbox-row span {
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: normal;
     text-transform: none;
     color: var(--text);
+    line-height: 1.5;
+  }
+  .checkbox-row .checkbox-sub {
+    font-size: 14px;
+    color: var(--muted);
+    display: inline-block;
+    margin-top: 2px;
   }
   .price-summary {
-    margin-top: 14px;
-    padding: 12px 14px;
+    margin-top: 16px;
+    padding: 14px 16px;
     background: var(--accent-soft);
-    border-radius: 3px;
-    font-size: 13px;
-    line-height: 1.7;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    line-height: 1.5;
     color: var(--accent-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
+  .price-summary > div { display: flex; align-items: baseline; gap: 8px; }
+  .price-summary .sum-label {
+    font-weight: 700;
+    flex: 0 0 116px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .price-summary .sum-value { font-weight: 300; flex: 1; }
   .price-summary .price-total {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     margin-top: 4px;
-    border-top: 1px solid var(--border);
-    padding-top: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
   }
   .bank-card {
-    margin-top: 16px;
-    padding: 16px;
+    margin-top: 18px;
+    padding: 18px;
     background: var(--accent-soft);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
   .bank-card-title {
-    font-size: 12px;
-    letter-spacing: 0.06em;
+    font-size: 14px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--accent-dark);
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   .bank-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: 10px;
-    padding: 6px 0;
+    padding: 7px 0;
     border-bottom: 1px dashed var(--border);
-    font-size: 13px;
+    font-size: 14px;
   }
   .bank-row:last-of-type { border-bottom: none; }
   .bank-label { color: var(--muted); white-space: nowrap; }
   .bank-value { font-weight: 600; color: var(--text); text-align: right; }
-  .bank-account-number { font-family: "Cormorant Garamond", serif; font-size: 19px; letter-spacing: 0.06em; }
+  .bank-account-number { font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.06em; }
   .copy-btn {
     width: auto;
     display: inline-block;
-    margin-top: 12px;
-    padding: 7px 14px;
+    margin-top: 14px;
+    padding: 8px 16px;
     background: var(--card);
     color: var(--accent-dark);
     border: 1px solid var(--accent);
-    font-size: 11px;
+    font-size: 14px;
+    box-shadow: none;
   }
+  .copy-btn:hover:not(:disabled) { box-shadow: var(--shadow-sm); transform: none; }
   .copy-btn:active:not(:disabled) { background: var(--accent-soft); }
   .secondary-btn {
     background: transparent;
     color: var(--accent-dark);
     border: 1px solid var(--border);
     margin-top: 10px;
+    box-shadow: none;
   }
+  .secondary-btn:hover:not(:disabled) { box-shadow: none; transform: none; background: var(--accent-soft); }
   .secondary-btn:active:not(:disabled) { background: var(--accent-soft); }
+  .line-notify-btn {
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: var(--card);
+    color: var(--accent-dark);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: none;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .line-notify-btn:hover { box-shadow: var(--shadow-sm); background: var(--accent-soft); }
   .step-label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: 14px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    font-weight: 500;
   }
 </style>
 </head>
 <body>
 
 <header>
+  <div class="lang-toggle">
+    <button type="button" class="lang-btn active" data-lang="th">TH</button>
+    <button type="button" class="lang-btn" data-lang="en">EN</button>
+  </div>
+  <img class="brand-mark" src="data:image/png;base64,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" alt="Humble House" />
+  <h1 id="hotelNameLabel" class="sr-only">Humble House</h1>
   <div class="eyebrow">Reservation</div>
-  <h1 id="hotelNameLabel">ระบบจองผ่าน LINE</h1>
-  <p>จองห้องพักของท่าน</p>
 </header>
 
 <main>
 
   <div class="tabs">
-    <button class="tab-btn active" id="tabBtnBook" type="button">จองห้องพัก</button>
-    <button class="tab-btn" id="tabBtnMy" type="button">ตรวจสอบการจองของฉัน</button>
+    <button class="tab-btn active" id="tabBtnBook" type="button"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span data-i18n="tab_book">จองห้องพัก</span></button>
+    <button class="tab-btn" id="tabBtnMy" type="button"><svg class="icon" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg><span data-i18n="tab_my">ตรวจสอบการจองของฉัน</span></button>
   </div>
 
   <div id="tabBook">
 
   <div class="card">
-    <label for="checkin">วันเช็คอิน</label>
+    <label for="checkin"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span data-i18n="label_checkin">วันเช็คอิน</span></label>
     <input type="date" id="checkin" />
 
-    <label for="checkout">วันเช็คเอาท์</label>
+    <label for="checkout"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span data-i18n="label_checkout">วันเช็คเอาท์</span></label>
     <input type="date" id="checkout" />
 
-    <button id="btnSearch" type="button">ค้นหาห้องว่าง</button>
+    <button id="btnSearch" type="button"><svg class="icon icon-lg" viewBox="0 0 24 24" style="stroke:currentColor;"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg><span data-i18n="btn_search">ค้นหาห้องว่าง</span></button>
     <div id="searchMsg" class="msg"></div>
   </div>
 
   <div class="card" id="roomCard" style="display:none;">
-    <div style="font-weight:600; margin-bottom:4px;">เลือกห้องพัก</div>
-    <div class="hint">แตะเพื่อเลือกห้องที่ต้องการ</div>
+    <div style="font-weight:600; margin-bottom:4px;"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M3 19v-7a2 2 0 012-2h14a2 2 0 012 2v7"/><path d="M3 19v2M21 19v2"/><path d="M3 12V7a2 2 0 012-2h4a2 2 0 012 2v3"/><path d="M11 10h10"/></svg><span data-i18n="select_room_heading">เลือกห้องพัก</span></div>
+    <div class="hint" data-i18n="select_room_hint">แตะเพื่อเลือกห้องที่ต้องการ</div>
     <div class="room-list" id="roomList"></div>
   </div>
 
   <div class="card" id="guestCard" style="display:none;">
-    <div class="step-label">ขั้นตอนที่ 1 — ข้อมูลผู้จอง</div>
+    <div class="step-label" data-i18n="step1_label">ขั้นตอนที่ 1 — ข้อมูลผู้จอง</div>
 
-    <label for="guestName">ชื่อผู้จอง</label>
-    <input type="text" id="guestName" placeholder="ชื่อ-นามสกุล" />
+    <label for="guestName"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg><span data-i18n="label_guest_name">ชื่อผู้จอง</span></label>
+    <input type="text" id="guestName" placeholder="ชื่อ-นามสกุล" data-i18n-placeholder="placeholder_guest_name" />
 
-    <label for="guestPhone">เบอร์โทรติดต่อ</label>
+    <label for="guestPhone"><svg class="icon" viewBox="0 0 24 24"><path d="M6.5 3h3l1.3 3.8-2 1.6a12.5 12.5 0 006 6l1.6-2L20.2 14.5v3a2 2 0 01-2.2 2A17 17 0 014.5 5.2 2 2 0 016.5 3z"/></svg><span data-i18n="label_guest_phone">เบอร์โทรติดต่อ</span></label>
     <input type="tel" id="guestPhone" placeholder="08x-xxx-xxxx" />
 
     <div class="row">
       <div>
-        <label for="guestCount">จำนวนผู้เข้าพัก</label>
+        <label for="guestCount"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17.5" cy="9.5" r="2.3"/><path d="M15.8 14.7c2.5.4 4.2 2.2 4.2 5.3"/></svg><span data-i18n="label_guest_count">จำนวนผู้เข้าพัก</span></label>
         <select id="guestCount">
           <option value="">เลือก</option>
         </select>
       </div>
       <div>
-        <label for="carCount">จำนวนรถ (คัน)</label>
+        <label for="carCount"><svg class="icon" viewBox="0 0 24 24"><path d="M4 16.5v-3l2-4.5h12l2 4.5v3"/><path d="M4 16.5h16"/><circle cx="7.5" cy="17.8" r="1.4"/><circle cx="16.5" cy="17.8" r="1.4"/></svg><span data-i18n="label_car_count">จำนวนรถ (คัน)</span></label>
         <select id="carCount">
           <option value="">เลือก</option>
         </select>
@@ -355,61 +637,61 @@
 
     <label class="checkbox-row" for="extraBedCheck" style="margin-top:14px; margin-bottom:0;">
       <input type="checkbox" id="extraBedCheck" />
-      <span id="extraBedLabel">ต้องการเตียงเสริม (พักได้เพิ่มเป็น 3 คน)</span>
+      <span id="extraBedLabel">รับบริการเตียงเสริม<br><span class="checkbox-sub">(เข้าพักเพิ่มขึ้นอีก 1 ท่าน)</span></span>
     </label>
 
-    <label for="checkinTime">เวลาเข้าที่พัก (ปกติ 14:00 น.)</label>
+    <label for="checkinTime"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg><span data-i18n="label_checkin_time">เวลาเข้าที่พัก (ปกติ 14:00 น.)</span></label>
     <input type="time" id="checkinTime" value="14:00" min="14:00" />
 
     <label class="checkbox-row" for="earlyCheckinCheck" style="margin-top:10px; margin-bottom:0;">
       <input type="checkbox" id="earlyCheckinCheck" />
-      <span>รับบริการ Early Check-in (เข้าก่อน 14:00 น. คิดเพิ่มชั่วโมงละ 100 บาท)</span>
+      <span><span data-i18n="early_checkin_label">รับบริการ Early Check-in</span><br><span class="checkbox-sub" data-i18n="early_checkin_sub">(เข้าก่อน 14:00 น. คิดเพิ่มชั่วโมงละ 100 บาท)</span></span>
     </label>
-    <div class="hint">ครึ่งชั่วโมงคิด 50 บาท ปัดตามเวลาจริงใกล้สุด</div>
 
     <div class="price-summary" id="priceSummary" style="display:none;"></div>
 
-    <label for="guestNote">หมายเหตุ (ถ้ามี)</label>
-    <input type="text" id="guestNote" placeholder="เช่น ความต้องการพิเศษ" />
+    <label for="guestNote"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20l1-4L15.5 5.5l3 3L8 19l-4 1z"/><path d="M13.5 7l3 3"/></svg><span data-i18n="label_note">หมายเหตุ (ถ้ามี)</span></label>
+    <input type="text" id="guestNote" placeholder="เช่น ความต้องการพิเศษ" data-i18n-placeholder="placeholder_note" />
 
-    <button id="btnGoPayment" type="button">ถัดไป: สรุปยอด &amp; ชำระเงิน</button>
+    <button id="btnGoPayment" type="button" data-i18n="btn_go_payment">ถัดไป: สรุปยอด &amp; ชำระเงิน</button>
     <div id="guestFormMsg" class="msg"></div>
   </div>
 
   <div class="card" id="paymentCard" style="display:none;">
-    <div class="step-label">ขั้นตอนที่ 2 — สรุปยอด &amp; ชำระเงิน</div>
+    <div class="step-label" data-i18n="step2_label">ขั้นตอนที่ 2 — สรุปยอด &amp; ชำระเงิน</div>
 
     <div class="price-summary" id="orderSummary" style="display:block;"></div>
 
     <div class="bank-card" id="bankCard">
-      <div class="bank-card-title">โอนเงินมาที่บัญชี</div>
-      <div class="bank-row"><span class="bank-label">ธนาคาร</span><span class="bank-value">กสิกรไทย</span></div>
-      <div class="bank-row"><span class="bank-label">เลขบัญชี</span><span class="bank-value bank-account-number" id="bankAccountNumber">232-3-77627-2</span></div>
-      <div class="bank-row"><span class="bank-label">ชื่อบัญชี</span><span class="bank-value">THE HUMBLE HOUSE Ltd.,Part.</span></div>
-      <button type="button" id="btnCopyAccount" class="copy-btn">คัดลอกเลขบัญชี</button>
+      <div class="bank-card-title"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M4 10l8-5 8 5"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 20h18"/></svg><span data-i18n="bank_card_title">บัญชีเลขที่</span></div>
+      <div class="bank-row"><span class="bank-label" data-i18n="bank_label_bank">ธนาคาร</span><span class="bank-value" data-i18n="bank_value_bank">กสิกรไทย</span></div>
+      <div class="bank-row"><span class="bank-label" data-i18n="bank_label_account_no">เลขบัญชี</span><span class="bank-value bank-account-number" id="bankAccountNumber">232-3-77627-2</span></div>
+      <div class="bank-row"><span class="bank-label" data-i18n="bank_label_account_name">ชื่อบัญชี</span><span class="bank-value">THE HUMBLE HOUSE Ltd.,Part.</span></div>
+      <button type="button" id="btnCopyAccount" class="copy-btn" data-i18n="btn_copy_account">คัดลอกเลขบัญชี</button>
     </div>
 
-    <label for="slipFile">แนบสลิปโอนเงิน (ถ้าชำระแล้ว)</label>
+    <label for="slipFile"><svg class="icon" viewBox="0 0 24 24"><path d="M15.5 7l-6.8 6.8a2.6 2.6 0 003.7 3.7L19.5 10a4.2 4.2 0 00-5.9-5.9L6.5 11.2"/></svg><span data-i18n="label_attach_slip">แนบสลิปโอนเงิน</span></label>
     <input type="file" id="slipFile" accept="image/*" />
-    <div class="hint" id="slipHint">ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองก่อนยืนยันการจอง</div>
+    <div class="hint" id="slipHint" data-i18n="slip_hint_default">ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองก่อนยืนยันการจอง</div>
     <img id="slipPreview" style="display:none; max-width:100%; margin-top:8px; border-radius:4px; border:1px solid var(--border);" />
 
-    <button id="btnConfirm" type="button">ยืนยันการจอง</button>
-    <button id="btnBackToGuest" type="button" class="secondary-btn">ย้อนกลับแก้ไขข้อมูล</button>
+    <button id="btnConfirm" type="button"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.5l2.4 2.4L16 9.3"/></svg><span data-i18n="btn_confirm">ยืนยันการจอง</span></button>
+    <button id="btnBackToGuest" type="button" class="secondary-btn" data-i18n="btn_back_to_guest">ย้อนกลับแก้ไขข้อมูล</button>
     <div id="confirmMsg" class="msg"></div>
+    <a id="btnNotifyLine" class="line-notify-btn" href="#" target="_blank" rel="noopener"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M4 12c0-4.4 3.8-8 8.5-8s8.5 3.6 8.5 8-3.8 8-8.5 8c-1 0-2-.15-2.9-.45L5 21l1.3-3.9C4.8 15.7 4 13.9 4 12z"/></svg><span data-i18n="btn_notify_line">แจ้งพนักงานทาง LINE</span></a>
   </div>
 
   </div>
 
   <div id="tabMy" style="display:none;">
     <div class="card">
-      <label for="myPhone">เบอร์โทรที่ใช้จอง</label>
+      <label for="myPhone"><svg class="icon" viewBox="0 0 24 24"><path d="M6.5 3h3l1.3 3.8-2 1.6a12.5 12.5 0 006 6l1.6-2L20.2 14.5v3a2 2 0 01-2.2 2A17 17 0 014.5 5.2 2 2 0 016.5 3z"/></svg><span data-i18n="label_my_phone">เบอร์โทรที่ใช้จอง</span></label>
       <input type="tel" id="myPhone" placeholder="08x-xxx-xxxx" />
 
-      <label for="myCode">รหัสการจอง</label>
-      <input type="text" id="myCode" placeholder="เช่น A1B2C3" style="text-transform:uppercase;" />
+      <label for="myCode"><svg class="icon" viewBox="0 0 24 24"><circle cx="8" cy="15.5" r="3.3"/><path d="M10.4 13.1L18.5 5M15.3 6.7l2 2M12.3 9.7l2 2"/></svg><span data-i18n="label_my_code">รหัสการจอง</span></label>
+      <input type="text" id="myCode" placeholder="เช่น A1B2C3" style="text-transform:uppercase;" data-i18n-placeholder="placeholder_my_code" />
 
-      <button id="btnMyBooking" type="button">ตรวจสอบการจอง</button>
+      <button id="btnMyBooking" type="button"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg><span data-i18n="btn_my_booking">ตรวจสอบการจอง</span></button>
       <div id="myMsg" class="msg"></div>
       <div id="myResults"></div>
     </div>
@@ -417,7 +699,20 @@
 
 </main>
 
-<footer>ข้อมูลของท่านจะถูกส่งไปยังโรงแรมเพื่อยืนยันการจอง</footer>
+<div class="lightbox-overlay" id="lightboxOverlay">
+  <div class="lightbox-header">
+    <div class="lightbox-title" id="lightboxTitle"></div>
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="ปิด" data-i18n-aria="lightbox_close_aria">&times;</button>
+  </div>
+  <div class="lightbox-stage" id="lightboxStage">
+    <button type="button" class="lightbox-nav prev" id="lightboxPrev" aria-label="รูปก่อนหน้า" data-i18n-aria="lightbox_prev_aria">&#8249;</button>
+    <img id="lightboxImg" src="" alt="">
+    <button type="button" class="lightbox-nav next" id="lightboxNext" aria-label="รูปถัดไป" data-i18n-aria="lightbox_next_aria">&#8250;</button>
+  </div>
+  <div class="lightbox-dots" id="lightboxDots"></div>
+</div>
+
+<footer data-i18n="footer_text">ข้อมูลของท่านจะถูกส่งไปยังโรงแรมเพื่อยืนยันการจอง</footer>
 
 <script>
 /* =========================================================
@@ -429,10 +724,307 @@ const CONFIG = {
   API_URL: "https://script.google.com/macros/s/AKfycbwOFWc264OkwMoWjakUPZbKZwHIkoO_asfVLaYEB5r3Lfegud_b7Qk5tMVOaPpGv5xCJg/exec",
 
   // ชื่อโรงแรม/ป้ายหัวข้อ (แก้ได้อิสระ ไม่กระทบระบบ)
-  HOTEL_NAME: "Humble House KKC"
+  HOTEL_NAME: "Humble House",
+
+  // Basic ID ของ LINE Official Account (ขึ้นต้นด้วย @) ใช้เปิดแชทแบบ pre-fill ข้อความ
+  // ตอนนี้ตั้งเป็น Humblehouse Test สำหรับทดสอบ — ต้องเปลี่ยนเป็น Basic ID ของ Humble House KKC (production) ก่อนใช้งานจริง
+  LINE_OA_BASIC_ID: "@622xrhht"
 };
 
 document.getElementById("hotelNameLabel").textContent = CONFIG.HOTEL_NAME;
+
+/* =========================================================
+   I18N — พจนานุกรมไทย/อังกฤษ ใช้ t(key, vars) เพื่อดึงข้อความ
+   ========================================================= */
+const I18N = {
+  th: {
+    title_tag: "จองห้องพัก",
+    tab_book: "จองห้องพัก",
+    tab_my: "ตรวจสอบการจองของฉัน",
+    label_checkin: "วันเช็คอิน",
+    label_checkout: "วันเช็คเอาท์",
+    btn_search: "ค้นหาห้องว่าง",
+    btn_search_loading: "กำลังตรวจสอบห้องว่าง...",
+    select_room_heading: "เลือกห้องพัก",
+    select_room_hint: "แตะเพื่อเลือกห้องที่ต้องการ",
+    step1_label: "ขั้นตอนที่ 1 — ข้อมูลผู้จอง",
+    label_guest_name: "ชื่อผู้จอง",
+    placeholder_guest_name: "ชื่อ-นามสกุล",
+    label_guest_phone: "เบอร์โทรติดต่อ",
+    label_guest_count: "จำนวนผู้เข้าพัก",
+    option_select: "เลือก",
+    unit_guest_count: "{n} คน",
+    label_car_count: "จำนวนรถ (คัน)",
+    unit_car_count: "{n} คัน",
+    extra_bed_default: "รับบริการเตียงเสริม",
+    extra_bed_sub_default: "(เข้าพักเพิ่มขึ้นอีก 1 ท่าน)",
+    extra_bed_priced: "รับบริการเตียงเสริม (+{price} บาท/คืน)",
+    extra_bed_sub_priced: "(เข้าพักสูงสุด {n} ท่าน)",
+    label_checkin_time: "เวลาเข้าที่พัก (ปกติ 14:00 น.)",
+    early_checkin_label: "รับบริการ Early Check-in",
+    early_checkin_sub: "(เข้าก่อน 14:00 น. คิดเพิ่มชั่วโมงละ 100 บาท)",
+    label_note: "หมายเหตุ (ถ้ามี)",
+    placeholder_note: "เช่น ความต้องการพิเศษ",
+    btn_go_payment: "ถัดไป: สรุปยอด & ชำระเงิน",
+    step2_label: "ขั้นตอนที่ 2 — สรุปยอด & ชำระเงิน",
+    bank_card_title: "บัญชีเลขที่",
+    bank_label_bank: "ธนาคาร",
+    bank_value_bank: "กสิกรไทย",
+    bank_label_account_no: "เลขบัญชี",
+    bank_label_account_name: "ชื่อบัญชี",
+    btn_copy_account: "คัดลอกเลขบัญชี",
+    btn_copied: "คัดลอกแล้ว ✓",
+    copy_prefix: "เลขบัญชี: ",
+    label_attach_slip: "แนบสลิปโอนเงิน",
+    slip_hint_default: "ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองก่อนยืนยันการจอง",
+    slip_hint_attached: "แนบสลิปแล้ว — ทางโรงแรมจะตรวจสอบก่อนยืนยันการจอง",
+    btn_confirm: "ยืนยันการจอง",
+    btn_confirm_loading: "กำลังส่งข้อมูล...",
+    btn_confirm_success: "จองสำเร็จแล้ว",
+    btn_back_to_guest: "ย้อนกลับแก้ไขข้อมูล",
+    label_my_phone: "เบอร์โทรที่ใช้จอง",
+    label_my_code: "รหัสการจอง",
+    placeholder_my_code: "เช่น A1B2C3",
+    btn_my_booking: "ตรวจสอบการจอง",
+    btn_my_booking_loading: "กำลังตรวจสอบ...",
+    lightbox_close_aria: "ปิด",
+    lightbox_prev_aria: "รูปก่อนหน้า",
+    lightbox_next_aria: "รูปถัดไป",
+    footer_text: "ข้อมูลของท่านจะถูกส่งไปยังโรงแรมเพื่อยืนยันการจอง",
+    err_select_dates: "กรุณาเลือกวันเช็คอินและเช็คเอาท์",
+    err_checkout_after_checkin: "วันเช็คเอาท์ต้องอยู่หลังวันเช็คอิน",
+    err_generic: "เกิดข้อผิดพลาด กรุณาลองใหม่",
+    info_no_rooms: "ขออภัย ไม่มีห้องว่างในช่วงวันที่เลือก",
+    err_connection: "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+    err_select_room: "กรุณาเลือกห้องพักก่อน",
+    err_name_phone_required: "กรุณากรอกชื่อและเบอร์โทรให้ครบ",
+    err_guest_count_required: "กรุณาเลือกจำนวนผู้เข้าพัก",
+    err_room_just_booked: "ขออภัย ห้องนี้เพิ่งถูกจองไปเมื่อครู่ กรุณาค้นหาและเลือกห้องใหม่อีกครั้ง",
+    err_phone_code_required: "กรุณากรอกเบอร์โทรและรหัสการจอง",
+    room_full_badge: "เต็ม",
+    room_remaining: "เหลือ {n} ห้อง",
+    room_price_per_night: "{price} บาท/คืน",
+    gallery_count: "{n} รูป",
+    sum_guest_name: "ชื่อผู้เข้าพัก",
+    sum_room_type: "ประเภทห้อง",
+    sum_stay_dates: "วันที่เข้าพัก",
+    sum_guest_count: "จำนวนผู้เข้าพัก",
+    sum_car_count: "จำนวนรถ",
+    sum_checkin_time: "เข้าพักเวลา",
+    sum_room_fee: "ค่าห้อง",
+    sum_extra_bed: "เตียงเสริม",
+    sum_early_checkin: "Early Check-in",
+    sum_grand_total: "ยอดรวมทั้งหมด",
+    price_summary_total: "รวมทั้งหมด",
+    nights_suffix: "({n} คืน)",
+    guests_suffix: "{n} คน",
+    cars_suffix: "{n} คัน",
+    time_suffix: "{t} น.",
+    room_fee_line: "{price} บาท × {n} คืน = {total} บาท",
+    fee_baht: "{amount} บาท",
+    confirm_success_line1: "จองสำเร็จ! ทางโรงแรมจะติดต่อยืนยันกลับไปที่เบอร์ที่ให้ไว้",
+    confirm_checkin_checkout: "เช็คอิน {checkin} — เช็คเอาท์ {checkout}",
+    confirm_guest_name: "ชื่อผู้จอง: {name}",
+    confirm_guest_count: "จำนวนผู้เข้าพัก: {n} คน",
+    confirm_room: "ห้อง: {room}",
+    confirm_extra_bed_suffix: " (มีเตียงเสริม)",
+    confirm_save_code: "กรุณาบันทึกรหัสนี้ไว้เพื่อใช้ตรวจสอบสถานะการจองภายหลัง",
+    btn_notify_line: "แจ้งพนักงานทาง LINE",
+    notify_line_message: "สวัสดีค่ะ ต้องการแจ้งรหัสจอง {code} ค่ะ",
+    my_guest_code: "ผู้จอง: {name} · รหัสจอง: {code}",
+    my_checkin_checkout: "เช็คอิน {checkin} — เช็คเอาท์ {checkout}",
+    my_guests_cars_time: "ผู้เข้าพัก {n} คน · รถ {m} คัน · เวลาเข้าพัก {t}",
+    my_extra_bed: "เตียงเสริม: {val}",
+    my_extra_bed_none: "ไม่มี",
+    my_early_checkin_fee: "Early Check-in: {fee} บาท",
+    my_total: "ยอดรวม: {total} บาท",
+    my_note: "หมายเหตุ: {note}",
+    status_confirmed: "ยืนยันแล้ว",
+    status_pending: "รอตรวจสอบ",
+    status_cancelled: "ยกเลิก",
+    err_booking_not_found: "ไม่พบข้อมูลการจอง"
+  },
+  en: {
+    title_tag: "Room Booking",
+    tab_book: "Book a Room",
+    tab_my: "My Booking",
+    label_checkin: "Check-in Date",
+    label_checkout: "Check-out Date",
+    btn_search: "Search Availability",
+    btn_search_loading: "Checking availability...",
+    select_room_heading: "Select a Room",
+    select_room_hint: "Tap to select your room",
+    step1_label: "Step 1 — Guest Information",
+    label_guest_name: "Guest Name",
+    placeholder_guest_name: "Full name",
+    label_guest_phone: "Phone Number",
+    label_guest_count: "Number of Guests",
+    option_select: "Select",
+    unit_guest_count: "{n} guest(s)",
+    label_car_count: "Number of Cars",
+    unit_car_count: "{n} car(s)",
+    extra_bed_default: "Add an Extra Bed",
+    extra_bed_sub_default: "(+1 additional guest)",
+    extra_bed_priced: "Add an Extra Bed (+{price} THB/night)",
+    extra_bed_sub_priced: "(Up to {n} guests)",
+    label_checkin_time: "Check-in Time (standard 14:00)",
+    early_checkin_label: "Early Check-in Service",
+    early_checkin_sub: "(Before 14:00, +100 THB per hour)",
+    label_note: "Note (optional)",
+    placeholder_note: "e.g. special requests",
+    btn_go_payment: "Next: Summary & Payment",
+    step2_label: "Step 2 — Summary & Payment",
+    bank_card_title: "Bank Account",
+    bank_label_bank: "Bank",
+    bank_value_bank: "Kasikorn Bank",
+    bank_label_account_no: "Account No.",
+    bank_label_account_name: "Account Name",
+    btn_copy_account: "Copy Account Number",
+    btn_copied: "Copied ✓",
+    copy_prefix: "Account No.: ",
+    label_attach_slip: "Attach Payment Slip",
+    slip_hint_default: "The hotel will verify your slip before confirming your booking",
+    slip_hint_attached: "Slip attached — the hotel will verify before confirming",
+    btn_confirm: "Confirm Booking",
+    btn_confirm_loading: "Submitting...",
+    btn_confirm_success: "Booking Confirmed",
+    btn_back_to_guest: "Back to Edit Info",
+    label_my_phone: "Phone Used to Book",
+    label_my_code: "Booking Code",
+    placeholder_my_code: "e.g. A1B2C3",
+    btn_my_booking: "Check Booking",
+    btn_my_booking_loading: "Checking...",
+    lightbox_close_aria: "Close",
+    lightbox_prev_aria: "Previous photo",
+    lightbox_next_aria: "Next photo",
+    footer_text: "Your information will be sent to the hotel to confirm your booking",
+    err_select_dates: "Please select check-in and check-out dates",
+    err_checkout_after_checkin: "Check-out date must be after check-in date",
+    err_generic: "Something went wrong, please try again",
+    info_no_rooms: "Sorry, no rooms available for the selected dates",
+    err_connection: "Connection failed, please try again",
+    err_select_room: "Please select a room first",
+    err_name_phone_required: "Please fill in your name and phone number",
+    err_guest_count_required: "Please select the number of guests",
+    err_room_just_booked: "Sorry, this room was just booked. Please search and select another room",
+    err_phone_code_required: "Please enter your phone number and booking code",
+    room_full_badge: "Full",
+    room_remaining: "{n} room(s) left",
+    room_price_per_night: "{price} THB/night",
+    gallery_count: "{n} photos",
+    sum_guest_name: "Guest Name",
+    sum_room_type: "Room Type",
+    sum_stay_dates: "Stay Dates",
+    sum_guest_count: "Guests",
+    sum_car_count: "Cars",
+    sum_checkin_time: "Check-in Time",
+    sum_room_fee: "Room Rate",
+    sum_extra_bed: "Extra Bed",
+    sum_early_checkin: "Early Check-in",
+    sum_grand_total: "Grand Total",
+    price_summary_total: "Total",
+    nights_suffix: "({n} night(s))",
+    guests_suffix: "{n}",
+    cars_suffix: "{n}",
+    time_suffix: "{t}",
+    room_fee_line: "{price} THB × {n} night(s) = {total} THB",
+    fee_baht: "{amount} THB",
+    confirm_success_line1: "Booking successful! The hotel will contact you to confirm at the number provided",
+    confirm_checkin_checkout: "Check-in {checkin} — Check-out {checkout}",
+    confirm_guest_name: "Guest: {name}",
+    confirm_guest_count: "Guests: {n}",
+    confirm_room: "Room: {room}",
+    confirm_extra_bed_suffix: " (with extra bed)",
+    confirm_save_code: "Please save this code to check your booking status later",
+    btn_notify_line: "Notify Staff via LINE",
+    notify_line_message: "Hi, I'd like to confirm my booking code {code}.",
+    my_guest_code: "Guest: {name} · Code: {code}",
+    my_checkin_checkout: "Check-in {checkin} — Check-out {checkout}",
+    my_guests_cars_time: "Guests {n} · Cars {m} · Check-in time {t}",
+    my_extra_bed: "Extra Bed: {val}",
+    my_extra_bed_none: "None",
+    my_early_checkin_fee: "Early Check-in: {fee} THB",
+    my_total: "Total: {total} THB",
+    my_note: "Note: {note}",
+    status_confirmed: "Confirmed",
+    status_pending: "Pending",
+    status_cancelled: "Cancelled",
+    err_booking_not_found: "Booking not found"
+  }
+};
+
+let currentLang = "th";
+try {
+  const savedLang = localStorage.getItem("hh_lang");
+  if (savedLang === "th" || savedLang === "en") currentLang = savedLang;
+} catch (e) {}
+
+function t(key, vars) {
+  let str = (I18N[currentLang] && I18N[currentLang][key]) || (I18N.th[key]) || key;
+  if (vars) {
+    Object.keys(vars).forEach(k => {
+      str = str.split("{" + k + "}").join(vars[k]);
+    });
+  }
+  return str;
+}
+
+// ดึงค่าฟิลด์ห้องพักตามภาษาปัจจุบัน (ถ้าไม่มีเวอร์ชันอังกฤษ ใช้ไทยแทน)
+function roomField(room, field) {
+  if (currentLang === "en") {
+    return room[field + "_en"] || room[field] || "";
+  }
+  return room[field] || "";
+}
+
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => {
+    el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
+  });
+  document.title = t("title_tag");
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll(".lang-btn").forEach(el => {
+    el.classList.toggle("active", el.getAttribute("data-lang") === currentLang);
+  });
+}
+
+function setLang(lang) {
+  if (lang !== "th" && lang !== "en") return;
+  if (lang === currentLang) return;
+  currentLang = lang;
+  try { localStorage.setItem("hh_lang", lang); } catch (e) {}
+  applyI18n();
+  // รีเฟรชเนื้อหาที่ render แบบไดนามิกด้วยภาษาปัจจุบัน
+  updateGuestCountOptions();
+  fillCarCountOptions();
+  if (availableRooms && availableRooms.length) renderRooms();
+  if (selectedRoom) {
+    updateExtraBedLabel();
+    updatePriceSummary();
+  }
+  const orderSummaryBox = document.getElementById("orderSummary");
+  if (orderSummaryBox && orderSummaryBox.innerHTML && selectedRoom) renderOrderSummary();
+  const myResultsBox = document.getElementById("myResults");
+  if (myResultsBox && myResultsBox.dataset.lastBookings) {
+    renderMyResults(JSON.parse(myResultsBox.dataset.lastBookings));
+  }
+  const notifyBtn = document.getElementById("btnNotifyLine");
+  if (notifyBtn && notifyBtn.dataset.bookingCode) {
+    const notifyText = t("notify_line_message", { code: notifyBtn.dataset.bookingCode });
+    notifyBtn.href = "https://line.me/R/oaMessage/" + encodeURIComponent(CONFIG.LINE_OA_BASIC_ID) + "/?" + encodeURIComponent(notifyText);
+  }
+}
+
+document.querySelectorAll(".lang-btn").forEach(btn => {
+  btn.addEventListener("click", () => setLang(btn.getAttribute("data-lang")));
+});
+applyI18n();
 
 let selectedRoom = null;
 let availableRooms = [];
@@ -475,26 +1067,34 @@ function updateGuestCountOptions() {
   const prevValue = guestSel.value;
   guestSel.innerHTML = "";
   const emptyOpt = document.createElement("option");
-  emptyOpt.value = ""; emptyOpt.textContent = "เลือก";
+  emptyOpt.value = ""; emptyOpt.textContent = t("option_select");
   guestSel.appendChild(emptyOpt);
   for (let i = 1; i <= max; i++) {
     const opt = document.createElement("option");
-    opt.value = i; opt.textContent = i + " คน";
+    opt.value = i; opt.textContent = t("unit_guest_count", { n: i });
     guestSel.appendChild(opt);
   }
   // ถ้าค่าที่เลือกไว้เดิมยังอยู่ในช่วงที่เลือกได้ ให้คงค่าเดิมไว้ ไม่งั้นรีเซ็ตเป็นค่าว่าง
   guestSel.value = (prevValue && Number(prevValue) <= max) ? prevValue : "";
 }
 
-(function populateSelects() {
-  updateGuestCountOptions();
+function fillCarCountOptions() {
   const carSel = document.getElementById("carCount");
+  const prevValue = carSel.value;
+  carSel.innerHTML = "";
+  const emptyOpt = document.createElement("option");
+  emptyOpt.value = ""; emptyOpt.textContent = t("option_select");
+  carSel.appendChild(emptyOpt);
   for (let i = 0; i <= 5; i++) {
     const opt = document.createElement("option");
-    opt.value = i; opt.textContent = i + " คัน";
+    opt.value = i; opt.textContent = t("unit_car_count", { n: i });
     carSel.appendChild(opt);
   }
-})();
+  carSel.value = prevValue || "";
+}
+
+updateGuestCountOptions();
+fillCarCountOptions();
 
 document.getElementById("extraBedCheck").addEventListener("change", () => {
   updateGuestCountOptions();
@@ -529,9 +1129,11 @@ document.getElementById("checkinTime").addEventListener("change", () => {
 function updateExtraBedLabel() {
   const label = document.getElementById("extraBedLabel");
   if (selectedRoom && selectedRoom.extraBedPrice) {
-    label.textContent = `ต้องการเตียงเสริม (+${selectedRoom.extraBedPrice.toLocaleString()} บาท/คืน — พักได้เพิ่มเป็น ${(selectedRoom.maxGuests || 2) + 1} คน)`;
+    const mainText = t("extra_bed_priced", { price: selectedRoom.extraBedPrice.toLocaleString() });
+    const subText = t("extra_bed_sub_priced", { n: (selectedRoom.maxGuests || 2) + 1 });
+    label.innerHTML = `${mainText}<br><span class="checkbox-sub">${subText}</span>`;
   } else {
-    label.textContent = "ต้องการเตียงเสริม (พักได้เพิ่มขึ้นอีก 1 คน)";
+    label.innerHTML = `${t("extra_bed_default")}<br><span class="checkbox-sub">${t("extra_bed_sub_default")}</span>`;
   }
 }
 
@@ -539,6 +1141,18 @@ function nightsBetween(checkinStr, checkoutStr) {
   const d1 = new Date(checkinStr + "T00:00:00");
   const d2 = new Date(checkoutStr + "T00:00:00");
   return Math.max(Math.round((d2 - d1) / (1000 * 60 * 60 * 24)), 1);
+}
+
+function formatThaiDate(dateStr) {
+  // "YYYY-MM-DD" -> "DD/MM/YYYY"
+  const parts = (dateStr || "").split("-");
+  if (parts.length !== 3) return dateStr || "-";
+  const [y, m, d] = parts;
+  return `${d}/${m}/${y}`;
+}
+
+function summaryRow(label, value, extraAttrs) {
+  return `<div${extraAttrs || ""}><span class="sum-label">${label} :</span> <span class="sum-value">${value}</span></div>`;
 }
 
 function updatePriceSummary() {
@@ -556,14 +1170,14 @@ function updatePriceSummary() {
   const earlyFee = computeEarlyCheckinFee(checkinTimeVal, earlyChecked);
   const total = roomTotal + extraBedFee + earlyFee;
 
-  let html = `<div>ค่าห้อง: ${selectedRoom.price.toLocaleString()} บาท × ${nights} คืน = ${roomTotal.toLocaleString()} บาท</div>`;
+  let html = summaryRow(t("sum_room_fee"), t("room_fee_line", { price: selectedRoom.price.toLocaleString(), n: nights, total: roomTotal.toLocaleString() }));
   if (extraBedChecked) {
-    html += `<div>เตียงเสริม: ${(selectedRoom.extraBedPrice || 0).toLocaleString()} บาท × ${nights} คืน = ${extraBedFee.toLocaleString()} บาท</div>`;
+    html += summaryRow(t("sum_extra_bed"), t("room_fee_line", { price: (selectedRoom.extraBedPrice || 0).toLocaleString(), n: nights, total: extraBedFee.toLocaleString() }));
   }
   if (earlyChecked && earlyFee > 0) {
-    html += `<div>Early Check-in: ${earlyFee.toLocaleString()} บาท</div>`;
+    html += summaryRow(t("sum_early_checkin"), t("fee_baht", { amount: earlyFee.toLocaleString() }));
   }
-  html += `<div class="price-total">รวมทั้งหมด: ${total.toLocaleString()} บาท</div>`;
+  html += summaryRow(t("price_summary_total"), t("fee_baht", { amount: total.toLocaleString() }), ' class="price-total"');
   box.innerHTML = html;
   box.style.display = "block";
 }
@@ -605,7 +1219,7 @@ document.getElementById("slipFile").addEventListener("change", (e) => {
       const preview = document.getElementById("slipPreview");
       preview.src = dataUrl;
       preview.style.display = "block";
-      document.getElementById("slipHint").textContent = "แนบสลิปแล้ว — ทางโรงแรมจะตรวจสอบก่อนยืนยันการจอง";
+      document.getElementById("slipHint").textContent = t("slip_hint_attached");
     };
     img.src = ev.target.result;
   };
@@ -650,17 +1264,17 @@ async function searchAvailability() {
   selectedRoom = null;
 
   if (!checkin || !checkout) {
-    showMsg(searchMsg, "error", "กรุณาเลือกวันเช็คอินและเช็คเอาท์");
+    showMsg(searchMsg, "error", t("err_select_dates"));
     return;
   }
   if (checkout <= checkin) {
-    showMsg(searchMsg, "error", "วันเช็คเอาท์ต้องอยู่หลังวันเช็คอิน");
+    showMsg(searchMsg, "error", t("err_checkout_after_checkin"));
     return;
   }
 
   const btn = document.getElementById("btnSearch");
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>กำลังตรวจสอบห้องว่าง...';
+  btn.innerHTML = '<span class="spinner"></span>' + t("btn_search_loading");
 
   try {
     const url = `${CONFIG.API_URL}?action=checkAvailability&checkin=${checkin}&checkout=${checkout}`;
@@ -668,7 +1282,7 @@ async function searchAvailability() {
     const data = await res.json();
 
     if (!data.ok) {
-      showMsg(searchMsg, "error", data.message || "เกิดข้อผิดพลาด กรุณาลองใหม่");
+      showMsg(searchMsg, "error", data.message || t("err_generic"));
       return;
     }
 
@@ -682,13 +1296,13 @@ async function searchAvailability() {
     roomCard.style.display = "block";
 
     if (availableRooms.every(r => r.remaining <= 0)) {
-      showMsg(searchMsg, "info", "ขออภัย ไม่มีห้องว่างในช่วงวันที่เลือก");
+      showMsg(searchMsg, "info", t("info_no_rooms"));
     }
   } catch (err) {
-    showMsg(searchMsg, "error", "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    showMsg(searchMsg, "error", t("err_connection"));
   } finally {
     btn.disabled = false;
-    btn.textContent = "ค้นหาห้องว่าง";
+    btn.textContent = t("btn_search");
   }
 }
 
@@ -699,25 +1313,127 @@ function renderRooms() {
     const div = document.createElement("div");
     const isFull = room.remaining <= 0;
     div.className = "room-option" + (isFull ? " full" : "");
-    const thumb = room.image
-      ? `<img class="room-thumb" src="${room.image}" alt="${room.name}" onerror="this.style.visibility='hidden'">`
-      : `<div class="room-thumb"></div>`;
+    const images = room.images && room.images.length ? room.images : (room.image ? [room.image] : []);
+    const thumbSrc = room.image || images[0] || "";
+    const thumb = thumbSrc
+      ? `<img class="room-thumb" src="${thumbSrc}" alt="${room.name}" onerror="this.style.visibility='hidden'">`
+      : "";
+    const galleryBtn = images.length > 1
+      ? `<button type="button" class="room-gallery-btn" data-gallery-btn>
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5-9 9"/></svg>
+           ${t("gallery_count", { n: images.length })}
+         </button>`
+      : "";
+    const bedDetailText = roomField(room, "bedDetail");
+    const roomSizeText = roomField(room, "roomSize");
+    const amenitiesList = currentLang === "en" ? (room.amenities_en && room.amenities_en.length ? room.amenities_en : room.amenities) : room.amenities;
+    const noteText = roomField(room, "note");
+    const specLines = [];
+    if (room.bedType || bedDetailText) {
+      const bedText = [room.bedType, bedDetailText].filter(Boolean).join(" · ");
+      specLines.push(`<div class="room-spec-line"><svg class="icon" viewBox="0 0 24 24"><path d="M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5"/><path d="M3 18v2M21 18v2"/><path d="M3 13V9.5a2 2 0 012-2h3.5a2 2 0 012 2V13"/><path d="M10.5 13h10.5"/></svg><span>${bedText}</span></div>`);
+    }
+    if (roomSizeText) {
+      specLines.push(`<div class="room-spec-line"><svg class="icon" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 8h3M3.5 12h2M3.5 16h3M20.5 8h-3M20.5 12h-2M20.5 16h-3M8 3.5v3M12 3.5v2M16 3.5v3M8 20.5v-3M12 20.5v-2M16 20.5v-3"/></svg><span>${roomSizeText}</span></div>`);
+    }
+    if (amenitiesList && amenitiesList.length) {
+      specLines.push(`<div class="room-spec-line"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.5l2.4 2.4L16 9.3"/></svg><span class="room-spec-amenities">${amenitiesList.join(" · ")}</span></div>`);
+    }
+    if (noteText) {
+      specLines.push(`<div class="room-spec-line"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20l1-4L15.5 5.5l3 3L8 19l-4 1z"/><path d="M13.5 7l3 3"/></svg><span class="room-spec-note">${noteText}</span></div>`);
+    }
+    const specsBlock = specLines.length ? `<div class="room-specs">${specLines.join("")}</div>` : "";
     div.innerHTML = `
-      <div class="room-option-left">
+      <div class="room-option-media">
         ${thumb}
-        <div>
-          <div class="room-name">${room.name}</div>
-          <div class="room-meta">${isFull ? "เต็ม" : "เหลือ " + room.remaining + " ห้อง"}</div>
-        </div>
+        ${isFull ? `<div class="room-option-badge">${t("room_full_badge")}</div>` : ""}
+        ${galleryBtn}
       </div>
-      <div class="room-price">${room.price ? room.price.toLocaleString() + " บาท/คืน" : ""}</div>
+      <div class="room-option-body">
+        <div class="room-option-top">
+          <div class="room-name">${room.name}</div>
+          <div class="room-price">${room.price ? t("room_price_per_night", { price: room.price.toLocaleString() }) : ""}</div>
+        </div>
+        <div class="room-meta">${isFull ? t("room_full_badge") : t("room_remaining", { n: room.remaining })}</div>
+        ${specsBlock}
+      </div>
     `;
+    if (images.length > 1) {
+      div.querySelector("[data-gallery-btn]").addEventListener("click", (evt) => {
+        evt.stopPropagation();
+        openLightbox(images, room.name);
+      });
+    }
     if (!isFull) {
       div.addEventListener("click", () => selectRoom(room, div));
+    }
+    if (selectedRoom && selectedRoom.id === room.id) {
+      div.classList.add("selected");
     }
     list.appendChild(div);
   });
 }
+
+/* ===== Lightbox: แกลเลอรีรูปห้องพัก ===== */
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+function openLightbox(images, title) {
+  lightboxImages = images;
+  lightboxIndex = 0;
+  document.getElementById("lightboxTitle").textContent = title || "";
+  renderLightboxImage();
+  document.getElementById("lightboxOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  document.getElementById("lightboxOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function renderLightboxImage() {
+  document.getElementById("lightboxImg").src = lightboxImages[lightboxIndex];
+  const dotsBox = document.getElementById("lightboxDots");
+  const showNav = lightboxImages.length > 1;
+  document.getElementById("lightboxPrev").style.display = showNav ? "flex" : "none";
+  document.getElementById("lightboxNext").style.display = showNav ? "flex" : "none";
+  dotsBox.style.display = showNav ? "flex" : "none";
+  dotsBox.innerHTML = lightboxImages.map((_, i) =>
+    `<div class="lightbox-dot${i === lightboxIndex ? " active" : ""}"></div>`
+  ).join("");
+}
+
+function lightboxPrev() {
+  lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+  renderLightboxImage();
+}
+
+function lightboxNext() {
+  lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+  renderLightboxImage();
+}
+
+document.getElementById("lightboxClose").addEventListener("click", closeLightbox);
+document.getElementById("lightboxPrev").addEventListener("click", lightboxPrev);
+document.getElementById("lightboxNext").addEventListener("click", lightboxNext);
+document.getElementById("lightboxOverlay").addEventListener("click", (evt) => {
+  if (evt.target.id === "lightboxOverlay") closeLightbox();
+});
+
+// ปัดซ้าย/ขวาเพื่อเปลี่ยนรูปบนมือถือ
+(function setupLightboxSwipe() {
+  const stage = document.getElementById("lightboxStage");
+  let touchStartX = 0;
+  stage.addEventListener("touchstart", (evt) => {
+    touchStartX = evt.changedTouches[0].clientX;
+  }, { passive: true });
+  stage.addEventListener("touchend", (evt) => {
+    const dx = evt.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 40) return;
+    if (dx > 0) lightboxPrev(); else lightboxNext();
+  }, { passive: true });
+})();
 
 function selectRoom(room, el) {
   document.querySelectorAll(".room-option").forEach(e => e.classList.remove("selected"));
@@ -734,6 +1450,7 @@ function selectRoom(room, el) {
   document.getElementById("paymentCard").style.display = "none";
   hideMsg(document.getElementById("guestFormMsg"));
   hideMsg(document.getElementById("confirmMsg"));
+  document.getElementById("btnNotifyLine").style.display = "none";
 }
 
 /* ===== ขั้นตอนที่ 1 -> 2: ตรวจข้อมูลผู้จอง แล้วไปหน้าสรุปยอด/ชำระเงิน ===== */
@@ -748,15 +1465,15 @@ function goToPayment() {
   const guestCount = document.getElementById("guestCount").value;
 
   if (!selectedRoom) {
-    showMsg(msg, "error", "กรุณาเลือกห้องพักก่อน");
+    showMsg(msg, "error", t("err_select_room"));
     return;
   }
   if (!name || !phone) {
-    showMsg(msg, "error", "กรุณากรอกชื่อและเบอร์โทรให้ครบ");
+    showMsg(msg, "error", t("err_name_phone_required"));
     return;
   }
   if (!guestCount) {
-    showMsg(msg, "error", "กรุณาเลือกจำนวนผู้เข้าพัก");
+    showMsg(msg, "error", t("err_guest_count_required"));
     return;
   }
 
@@ -779,19 +1496,25 @@ function renderOrderSummary() {
   const total = roomTotal + extraBedFee + earlyFee;
   const guestCount = document.getElementById("guestCount").value;
   const carCount = document.getElementById("carCount").value;
+  const guestName = document.getElementById("guestName").value.trim();
+
+  const row = (label, value, extraAttrs) => `<div${extraAttrs || ""}><span class="sum-label">${label} :</span> <span class="sum-value">${value}</span></div>`;
 
   let html =
-    `<div>ห้อง: <strong>${selectedRoom.name}</strong></div>` +
-    `<div>เช็คอิน ${currentCheckin} — เช็คเอาท์ ${currentCheckout} (${nights} คืน)</div>` +
-    `<div>ผู้เข้าพัก ${guestCount || "-"} คน · รถ ${carCount || "-"} คัน${checkinTime ? " · เข้าพักเวลา " + checkinTime : ""}</div>` +
-    `<div style="margin-top:8px;">ค่าห้อง: ${selectedRoom.price.toLocaleString()} บาท × ${nights} คืน = ${roomTotal.toLocaleString()} บาท</div>`;
+    row(t("sum_guest_name"), guestName || "-") +
+    row(t("sum_room_type"), selectedRoom.name) +
+    row(t("sum_stay_dates"), `${formatThaiDate(currentCheckin)} - ${formatThaiDate(currentCheckout)} ${t("nights_suffix", { n: nights })}`) +
+    row(t("sum_guest_count"), t("guests_suffix", { n: guestCount || "-" })) +
+    row(t("sum_car_count"), t("cars_suffix", { n: carCount || "-" })) +
+    (checkinTime ? row(t("sum_checkin_time"), t("time_suffix", { t: checkinTime })) : "") +
+    row(t("sum_room_fee"), t("room_fee_line", { price: selectedRoom.price.toLocaleString(), n: nights, total: roomTotal.toLocaleString() }));
   if (extraBedChecked) {
-    html += `<div>เตียงเสริม: ${(selectedRoom.extraBedPrice || 0).toLocaleString()} บาท × ${nights} คืน = ${extraBedFee.toLocaleString()} บาท</div>`;
+    html += row(t("sum_extra_bed"), t("room_fee_line", { price: (selectedRoom.extraBedPrice || 0).toLocaleString(), n: nights, total: extraBedFee.toLocaleString() }));
   }
   if (earlyChecked && earlyFee > 0) {
-    html += `<div>Early Check-in: ${earlyFee.toLocaleString()} บาท</div>`;
+    html += row(t("sum_early_checkin"), t("fee_baht", { amount: earlyFee.toLocaleString() }));
   }
-  html += `<div class="price-total">ยอดรวมทั้งหมด: ${total.toLocaleString()} บาท</div>`;
+  html += row(t("sum_grand_total"), t("fee_baht", { amount: total.toLocaleString() }), ' class="price-total"');
   box.innerHTML = html;
 }
 
@@ -806,11 +1529,11 @@ document.getElementById("btnCopyAccount").addEventListener("click", async () => 
   const number = document.getElementById("bankAccountNumber").textContent.trim();
   try {
     await navigator.clipboard.writeText(number);
-    btn.textContent = "คัดลอกแล้ว ✓";
+    btn.textContent = t("btn_copied");
   } catch (err) {
-    btn.textContent = "เลขบัญชี: " + number;
+    btn.textContent = t("copy_prefix") + number;
   }
-  setTimeout(() => { btn.textContent = "คัดลอกเลขบัญชี"; }, 2000);
+  setTimeout(() => { btn.textContent = t("btn_copy_account"); }, 2000);
 });
 
 document.getElementById("btnConfirm").addEventListener("click", submitBooking);
@@ -829,21 +1552,21 @@ async function submitBooking() {
   const earlyCheckin = document.getElementById("earlyCheckinCheck").checked;
 
   if (!selectedRoom) {
-    showMsg(confirmMsg, "error", "กรุณาเลือกห้องพักก่อน");
+    showMsg(confirmMsg, "error", t("err_select_room"));
     return;
   }
   if (!name || !phone) {
-    showMsg(confirmMsg, "error", "กรุณากรอกชื่อและเบอร์โทรให้ครบ");
+    showMsg(confirmMsg, "error", t("err_name_phone_required"));
     return;
   }
   if (!guestCount) {
-    showMsg(confirmMsg, "error", "กรุณาเลือกจำนวนผู้เข้าพัก");
+    showMsg(confirmMsg, "error", t("err_guest_count_required"));
     return;
   }
 
   const btn = document.getElementById("btnConfirm");
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>กำลังส่งข้อมูล...';
+  btn.innerHTML = '<span class="spinner"></span>' + t("btn_confirm_loading");
 
   try {
     const res = await fetch(CONFIG.API_URL, {
@@ -871,12 +1594,24 @@ async function submitBooking() {
 
     if (data.ok) {
       confirmMsg.className = "msg success";
-      confirmMsg.innerHTML = "จองสำเร็จ! ทางโรงแรมจะติดต่อยืนยันกลับไปที่เบอร์ที่ให้ไว้" +
-        `<br><span class="booking-code">${data.bookingCode}</span>` +
-        (data.totalPrice ? `<br>ยอดรวมทั้งหมด: ${data.totalPrice.toLocaleString()} บาท (${data.nights} คืน)` : "") +
-        "<br>กรุณาบันทึกรหัสนี้ไว้เพื่อใช้ตรวจสอบสถานะการจองภายหลัง";
+      confirmMsg.innerHTML = t("confirm_success_line1") + "<br>" +
+        `<span class="booking-code">${data.bookingCode}</span>` +
+        `<br>` + t("confirm_checkin_checkout", { checkin: data.checkin || currentCheckin, checkout: data.checkout || currentCheckout }) +
+        `<br>` + t("confirm_guest_name", { name: data.guestName || name }) +
+        `<br>` + t("confirm_guest_count", { n: data.guestCount || guestCount }) +
+        `<br>` + t("confirm_room", { room: data.roomName || (selectedRoom && selectedRoom.name) || "" }) + (data.wantsExtraBed ? t("confirm_extra_bed_suffix") : "") +
+        "<br>" + t("confirm_save_code");
       confirmMsg.style.display = "block";
-      btn.textContent = "จองสำเร็จแล้ว";
+
+      // ปุ่มแจ้งพนักงานทาง LINE แบบ pre-fill ข้อความ (มีรหัสจองติดไปด้วย เพื่อให้แอดมินเช็คได้ว่าเป็นการจองไหน)
+      const notifyBtn = document.getElementById("btnNotifyLine");
+      if (notifyBtn) {
+        notifyBtn.dataset.bookingCode = data.bookingCode;
+        const notifyText = t("notify_line_message", { code: data.bookingCode });
+        notifyBtn.href = "https://line.me/R/oaMessage/" + encodeURIComponent(CONFIG.LINE_OA_BASIC_ID) + "/?" + encodeURIComponent(notifyText);
+        notifyBtn.style.display = "block";
+      }
+      btn.textContent = t("btn_confirm_success");
       document.getElementById("guestName").disabled = true;
       document.getElementById("guestPhone").disabled = true;
       document.getElementById("guestCount").disabled = true;
@@ -888,43 +1623,73 @@ async function submitBooking() {
       document.getElementById("slipFile").disabled = true;
       document.getElementById("btnBackToGuest").disabled = true;
     } else if (data.code === "ROOM_JUST_TAKEN") {
-      showMsg(confirmMsg, "error", "ขออภัย ห้องนี้เพิ่งถูกจองไปเมื่อครู่ กรุณาค้นหาและเลือกห้องใหม่อีกครั้ง");
+      showMsg(confirmMsg, "error", t("err_room_just_booked"));
       btn.disabled = false;
-      btn.textContent = "ยืนยันการจอง";
+      btn.textContent = t("btn_confirm");
       // บังคับให้ค้นหาใหม่เพื่อเอาข้อมูลล่าสุด
       searchAvailability();
     } else {
-      showMsg(confirmMsg, "error", data.message || "เกิดข้อผิดพลาด กรุณาลองใหม่");
+      showMsg(confirmMsg, "error", data.message || t("err_generic"));
       btn.disabled = false;
-      btn.textContent = "ยืนยันการจอง";
+      btn.textContent = t("btn_confirm");
     }
   } catch (err) {
-    showMsg(confirmMsg, "error", "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    showMsg(confirmMsg, "error", t("err_connection"));
     btn.disabled = false;
-    btn.textContent = "ยืนยันการจอง";
+    btn.textContent = t("btn_confirm");
   }
 }
 
 /* ===== ตรวจสอบการจองของฉัน ===== */
 document.getElementById("btnMyBooking").addEventListener("click", checkMyBooking);
 
+function statusLabel(status) {
+  if (status === "ยืนยันแล้ว") return t("status_confirmed");
+  if (status === "รอตรวจสอบ") return t("status_pending");
+  if (status === "ยกเลิก") return t("status_cancelled");
+  return status;
+}
+
+function renderMyResults(bookings) {
+  const myResults = document.getElementById("myResults");
+  myResults.innerHTML = "";
+  myResults.dataset.lastBookings = JSON.stringify(bookings);
+  bookings.forEach(b => {
+    const div = document.createElement("div");
+    div.className = "my-booking-item";
+    div.innerHTML = `
+      <div class="room-name">${b.roomName}</div>
+      <div class="room-meta">${t("my_guest_code", { name: b.guestName || "-", code: b.bookingCode })}</div>
+      <div class="room-meta">${t("my_checkin_checkout", { checkin: b.checkin, checkout: b.checkout })}</div>
+      <div class="room-meta">${t("my_guests_cars_time", { n: b.guestCount || "-", m: b.carCount || "-", t: b.checkinTime || "-" })}</div>
+      <div class="room-meta">${t("my_extra_bed", { val: b.extraBed || t("my_extra_bed_none") })}</div>
+      ${b.earlyCheckinFee ? `<div class="room-meta">${t("my_early_checkin_fee", { fee: Number(b.earlyCheckinFee).toLocaleString() })}</div>` : ""}
+      ${b.totalPrice ? `<div class="room-meta">${t("my_total", { total: Number(b.totalPrice).toLocaleString() })}</div>` : ""}
+      ${b.note ? `<div class="room-meta">${t("my_note", { note: b.note })}</div>` : ""}
+      <div class="status${b.status === "ยืนยันแล้ว" ? " status-confirmed" : ""}${b.status === "ยกเลิก" ? " status-cancelled" : ""}">${statusLabel(b.status)}</div>
+    `;
+    myResults.appendChild(div);
+  });
+}
+
 async function checkMyBooking() {
   const myMsg = document.getElementById("myMsg");
   const myResults = document.getElementById("myResults");
   hideMsg(myMsg);
   myResults.innerHTML = "";
+  delete myResults.dataset.lastBookings;
 
   const phone = document.getElementById("myPhone").value.trim();
   const code = document.getElementById("myCode").value.trim();
 
   if (!phone || !code) {
-    showMsg(myMsg, "error", "กรุณากรอกเบอร์โทรและรหัสการจอง");
+    showMsg(myMsg, "error", t("err_phone_code_required"));
     return;
   }
 
   const btn = document.getElementById("btnMyBooking");
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>กำลังตรวจสอบ...';
+  btn.innerHTML = '<span class="spinner"></span>' + t("btn_my_booking_loading");
 
   try {
     const url = `${CONFIG.API_URL}?action=myBooking&phone=${encodeURIComponent(phone)}&code=${encodeURIComponent(code)}`;
@@ -932,31 +1697,16 @@ async function checkMyBooking() {
     const data = await res.json();
 
     if (!data.ok) {
-      showMsg(myMsg, "error", data.message || "ไม่พบข้อมูลการจอง");
+      showMsg(myMsg, "error", t("err_booking_not_found"));
       return;
     }
 
-    data.bookings.forEach(b => {
-      const div = document.createElement("div");
-      div.className = "my-booking-item";
-      div.innerHTML = `
-        <div class="room-name">${b.roomName}</div>
-        <div class="room-meta">ผู้จอง: ${b.guestName || "-"} · รหัสจอง: ${b.bookingCode}</div>
-        <div class="room-meta">เช็คอิน ${b.checkin} — เช็คเอาท์ ${b.checkout}</div>
-        <div class="room-meta">ผู้เข้าพัก ${b.guestCount || "-"} คน · รถ ${b.carCount || "-"} คัน · เวลาเข้าพัก ${b.checkinTime || "-"}</div>
-        <div class="room-meta">เตียงเสริม: ${b.extraBed || "ไม่มี"}</div>
-        ${b.earlyCheckinFee ? `<div class="room-meta">Early Check-in: ${Number(b.earlyCheckinFee).toLocaleString()} บาท</div>` : ""}
-        ${b.totalPrice ? `<div class="room-meta">ยอดรวม: ${Number(b.totalPrice).toLocaleString()} บาท</div>` : ""}
-        ${b.note ? `<div class="room-meta">หมายเหตุ: ${b.note}</div>` : ""}
-        <div class="status">${b.status}</div>
-      `;
-      myResults.appendChild(div);
-    });
+    renderMyResults(data.bookings);
   } catch (err) {
-    showMsg(myMsg, "error", "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    showMsg(myMsg, "error", t("err_connection"));
   } finally {
     btn.disabled = false;
-    btn.textContent = "ตรวจสอบการจอง";
+    btn.textContent = t("btn_my_booking");
   }
 }
 </script>
