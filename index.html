@@ -38,6 +38,12 @@
     --shadow-lift: 0 10px 26px rgba(43,33,24,0.16);
   }
   * { box-sizing: border-box; }
+  html, body {
+    /* กันหน้าเว็บเลื่อนแนวนอนได้เด็ดขาด — เผื่อกรณี input วันที่บนบางอุปกรณ์ (เช่น iOS แบบปฏิทิน พ.ศ.)
+       มีข้อความภายในยาวกว่าที่คาดไว้จนดันขนาดล้นออกนอกกรอบ ไม่ให้กระทบผู้ใช้เห็นเป็นแถบเลื่อนแนวนอน */
+    overflow-x: hidden;
+    max-width: 100%;
+  }
   body {
     margin: 0;
     font-family: "Montserrat", "Noto Sans Thai", sans-serif;
@@ -80,9 +86,9 @@
     color: var(--muted);
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 11px;
     letter-spacing: 0.04em;
-    padding: 5px 11px;
+    padding: 3px 8px;
     cursor: pointer;
     margin-top: 0;
     box-shadow: none;
@@ -139,6 +145,7 @@
   label:first-child { margin-top: 0; }
   input, select {
     width: 100%;
+    max-width: 100%;
     padding: 11px 13px;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -147,6 +154,14 @@
     background: #fff;
     color: var(--text);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input[type="date"], input[type="time"] {
+    /* บางอุปกรณ์ (เช่น iOS ที่ตั้งค่าเป็นปฏิทิน พ.ศ.) แสดงข้อความในกล่องวันที่ยาวกว่าปกติ
+       ("11 Sep BE 2569") ลด padding/ตัวอักษรลงนิดหน่อยเฉพาะกล่องนี้ ให้พอดีกับพื้นที่มากขึ้น
+       ป้องกันกล่องดันล้นขอบจอบนหน้าจอแคบ */
+    min-width: 0;
+    padding: 11px 8px;
+    font-size: 13px;
   }
   input:focus, select:focus {
     outline: none;
