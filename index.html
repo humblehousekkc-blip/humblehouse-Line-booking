@@ -144,24 +144,20 @@
   }
   label:first-child { margin-top: 0; }
   input, select {
+    /* ขนาด/ระยะห่างเดียวกันทุกกล่อง (ค้นหาห้องว่าง / ตรวจสอบการจอง / ข้อมูลผู้จอง ฯลฯ)
+       ใช้ค่าที่กระชับพอให้กล่องวันที่บนบางอุปกรณ์ (เช่น iOS ปฏิทิน พ.ศ. "11 Sep BE 2569")
+       ไม่ล้นขอบจอบนหน้าจอแคบ แล้วให้กล่องอื่นทั้งหมดใช้ขนาดเดียวกันนี้ด้วย เพื่อความสม่ำเสมอ */
     width: 100%;
     max-width: 100%;
-    padding: 11px 13px;
+    min-width: 0;
+    padding: 11px 8px;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    font-size: 14px;
+    font-size: 13px;
     font-family: inherit;
     background: #fff;
     color: var(--text);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  }
-  input[type="date"], input[type="time"] {
-    /* บางอุปกรณ์ (เช่น iOS ที่ตั้งค่าเป็นปฏิทิน พ.ศ.) แสดงข้อความในกล่องวันที่ยาวกว่าปกติ
-       ("11 Sep BE 2569") ลด padding/ตัวอักษรลงนิดหน่อยเฉพาะกล่องนี้ ให้พอดีกับพื้นที่มากขึ้น
-       ป้องกันกล่องดันล้นขอบจอบนหน้าจอแคบ */
-    min-width: 0;
-    padding: 11px 8px;
-    font-size: 13px;
   }
   input:focus, select:focus {
     outline: none;
@@ -455,6 +451,24 @@
   }
   .my-booking-item .status.status-confirmed { background: var(--success-soft); color: var(--success); }
   .my-booking-item .status.status-cancelled { background: var(--danger-soft); color: var(--danger); }
+  .my-field-row {
+    display: flex;
+    align-items: baseline;
+    padding: 3px 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .my-field-row .my-field-label {
+    flex: 0 0 118px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .my-field-row .my-field-value {
+    flex: 1;
+    color: var(--text);
+    font-weight: 500;
+    word-break: break-word;
+  }
   .checkbox-row {
     display: flex;
     align-items: flex-start;
@@ -657,11 +671,7 @@
 
     <label for="checkinTime"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg><span data-i18n="label_checkin_time">เวลาเข้าที่พัก (ปกติ 14:00 น.)</span></label>
     <input type="time" id="checkinTime" value="14:00" min="14:00" />
-
-    <label class="checkbox-row" for="earlyCheckinCheck" style="margin-top:10px; margin-bottom:0;">
-      <input type="checkbox" id="earlyCheckinCheck" />
-      <span><span data-i18n="early_checkin_label">รับบริการ Early Check-in</span><br><span class="checkbox-sub" data-i18n="early_checkin_sub">(เข้าก่อน 14:00 น. คิดเพิ่มชั่วโมงละ 100 บาท)</span></span>
-    </label>
+    <div class="hint" data-i18n="early_checkin_hint">รับบริการ Early check-in กรุณาติดต่อพนักงาน</div>
 
     <div class="price-summary" id="priceSummary" style="display:none;"></div>
 
@@ -776,8 +786,7 @@ const I18N = {
     extra_bed_priced: "รับบริการเตียงเสริม (+{price} บาท/คืน)",
     extra_bed_sub_priced: "(เข้าพักสูงสุด {n} ท่าน)",
     label_checkin_time: "เวลาเข้าที่พัก (ปกติ 14:00 น.)",
-    early_checkin_label: "รับบริการ Early Check-in",
-    early_checkin_sub: "(เข้าก่อน 14:00 น. คิดเพิ่มชั่วโมงละ 100 บาท)",
+    early_checkin_hint: "รับบริการ Early check-in กรุณาติดต่อพนักงาน",
     label_note: "หมายเหตุ (ถ้ามี)",
     placeholder_note: "เช่น ความต้องการพิเศษ",
     btn_go_payment: "ถัดไป: สรุปยอด & ชำระเงิน",
@@ -828,7 +837,6 @@ const I18N = {
     sum_checkin_time: "เข้าพักเวลา",
     sum_room_fee: "ค่าห้อง",
     sum_extra_bed: "เตียงเสริม",
-    sum_early_checkin: "Early Check-in",
     sum_grand_total: "ยอดรวมทั้งหมด",
     price_summary_total: "รวมทั้งหมด",
     nights_suffix: "({n} คืน)",
@@ -846,13 +854,14 @@ const I18N = {
     confirm_save_code: "กรุณาบันทึกรหัสนี้ไว้เพื่อใช้ตรวจสอบสถานะการจองภายหลัง",
     btn_notify_line: "แจ้งพนักงานทาง LINE",
     notify_line_message: "สวัสดีค่ะ ต้องการแจ้งรหัสจอง {code} ค่ะ",
-    my_guest_code: "ผู้จอง: {name} · รหัสจอง: {code}",
-    my_checkin_checkout: "เช็คอิน {checkin} — เช็คเอาท์ {checkout}",
-    my_guests_cars_time: "ผู้เข้าพัก {n} คน · รถ {m} คัน · เวลาเข้าพัก {t}",
-    my_extra_bed: "เตียงเสริม: {val}",
+    my_field_code: "รหัสจอง",
+    my_field_guest_name: "ชื่อผู้จอง",
+    my_field_stay_date: "วันที่เข้าพัก",
+    my_field_extra_bed: "เตียงเสริม",
+    my_field_checkin_time: "เวลาเข้าพัก",
+    my_field_guest_count: "จำนวนผู้เข้าพัก",
+    my_field_car_count: "จำนวนรถ",
     my_extra_bed_none: "ไม่มี",
-    my_early_checkin_fee: "Early Check-in: {fee} บาท",
-    my_total: "ยอดรวม: {total} บาท",
     my_note: "หมายเหตุ: {note}",
     status_confirmed: "ยืนยันแล้ว",
     status_pending: "รอตรวจสอบ",
@@ -883,8 +892,7 @@ const I18N = {
     extra_bed_priced: "Add an Extra Bed (+{price} THB/night)",
     extra_bed_sub_priced: "(Up to {n} guests)",
     label_checkin_time: "Check-in Time (standard 14:00)",
-    early_checkin_label: "Early Check-in Service",
-    early_checkin_sub: "(Before 14:00, +100 THB per hour)",
+    early_checkin_hint: "For Early Check-in service, please contact staff directly.",
     label_note: "Note (optional)",
     placeholder_note: "e.g. special requests",
     btn_go_payment: "Next: Summary & Payment",
@@ -935,7 +943,6 @@ const I18N = {
     sum_checkin_time: "Check-in Time",
     sum_room_fee: "Room Rate",
     sum_extra_bed: "Extra Bed",
-    sum_early_checkin: "Early Check-in",
     sum_grand_total: "Grand Total",
     price_summary_total: "Total",
     nights_suffix: "({n} night(s))",
@@ -953,13 +960,14 @@ const I18N = {
     confirm_save_code: "Please save this code to check your booking status later",
     btn_notify_line: "Notify Staff via LINE",
     notify_line_message: "Hi, I'd like to confirm my booking code {code}.",
-    my_guest_code: "Guest: {name} · Code: {code}",
-    my_checkin_checkout: "Check-in {checkin} — Check-out {checkout}",
-    my_guests_cars_time: "Guests {n} · Cars {m} · Check-in time {t}",
-    my_extra_bed: "Extra Bed: {val}",
+    my_field_code: "Booking Code",
+    my_field_guest_name: "Guest Name",
+    my_field_stay_date: "Check-in Date",
+    my_field_extra_bed: "Extra Bed",
+    my_field_checkin_time: "Check-in Time",
+    my_field_guest_count: "Number of Guests",
+    my_field_car_count: "Number of Cars",
     my_extra_bed_none: "None",
-    my_early_checkin_fee: "Early Check-in: {fee} THB",
-    my_total: "Total: {total} THB",
     my_note: "Note: {note}",
     status_confirmed: "Confirmed",
     status_pending: "Pending",
@@ -1048,27 +1056,6 @@ let currentCheckout = "";
 let slipBase64 = "";
 let slipMimeType = "";
 let defaultCheckinTime = "14:00";
-let earlyCheckinFeePerHalfHour = 50;
-
-/**
- * คำนวณค่า Early Check-in ฝั่งหน้าเว็บ (แสดงผลให้ลูกค้าดูก่อน — ยอดจริงคำนวณซ้ำที่ฝั่งเซิร์ฟเวอร์อีกที)
- * กติกา: นับชั่วโมงเต็มก่อน (ชม.ละ 100 บาท) เศษนาทีที่เหลือ <30 นาที คิดเพิ่ม 50 บาท, ตั้งแต่ 30 นาทีขึ้นไปคิดเพิ่มเต็มชั่วโมง (100 บาท)
- */
-function computeEarlyCheckinFee(timeStr, earlyChecked) {
-  if (!earlyChecked || !timeStr) return 0;
-  const parts = timeStr.split(":");
-  if (parts.length < 2) return 0;
-  const minutesFromMidnight = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
-  const defaultParts = defaultCheckinTime.split(":");
-  const defaultMinutes = parseInt(defaultParts[0], 10) * 60 + parseInt(defaultParts[1], 10);
-  if (isNaN(minutesFromMidnight) || minutesFromMidnight >= defaultMinutes) return 0;
-  const earlyMinutes = defaultMinutes - minutesFromMidnight;
-  const fullHours = Math.floor(earlyMinutes / 60);
-  const remainderMinutes = earlyMinutes % 60;
-  const remainderBlocks = remainderMinutes === 0 ? 0 : (remainderMinutes < 30 ? 1 : 2);
-  const halfHourBlocks = fullHours * 2 + remainderBlocks;
-  return halfHourBlocks * earlyCheckinFeePerHalfHour;
-}
 
 /* ===== เติมตัวเลือกจำนวนผู้เข้าพัก / จำนวนรถ =====
    จำนวนผู้เข้าพัก: ปกติเลือกได้สูงสุดตาม room.maxGuests (ปกติ 2 คน)
@@ -1118,24 +1105,12 @@ document.getElementById("extraBedCheck").addEventListener("change", () => {
 });
 document.getElementById("guestCount").addEventListener("change", updatePriceSummary);
 
-/* ===== Early Check-in: ปกติเข้าได้ตั้งแต่ 14:00 น. ต้องติ๊กยินยอมก่อนถึงเลือกเวลาก่อนหน้านั้นได้ ===== */
-document.getElementById("earlyCheckinCheck").addEventListener("change", (e) => {
-  const timeInput = document.getElementById("checkinTime");
-  if (e.target.checked) {
-    timeInput.removeAttribute("min");
-  } else {
-    timeInput.min = defaultCheckinTime;
-    if (timeInput.value && timeInput.value < defaultCheckinTime) {
-      timeInput.value = defaultCheckinTime;
-    }
-  }
-  updatePriceSummary();
-});
+/* ===== เวลาเข้าพัก: เข้าได้ตั้งแต่เวลาปกติ (14:00) เป็นต้นไปเท่านั้น
+   ต้องการเข้าก่อนเวลานี้ให้ติดต่อพนักงานโดยตรง (ไม่มี checkbox/ค่าใช้จ่ายที่ระบบคำนวณอีกต่อไป) ===== */
 document.getElementById("checkinTime").addEventListener("change", () => {
-  const earlyChecked = document.getElementById("earlyCheckinCheck").checked;
   const timeInput = document.getElementById("checkinTime");
-  // กันกรณีเบราว์เซอร์บางตัวไม่บังคับ min ให้ (เช่น พิมพ์เอง) — ถ้ายังไม่ติ๊ก early check-in ให้ดึงกลับเป็นเวลาปกติ
-  if (!earlyChecked && timeInput.value && timeInput.value < defaultCheckinTime) {
+  // กันกรณีเบราว์เซอร์บางตัวไม่บังคับ min ให้ (เช่น พิมพ์เอง)
+  if (timeInput.value && timeInput.value < defaultCheckinTime) {
     timeInput.value = defaultCheckinTime;
   }
   updatePriceSummary();
@@ -1180,17 +1155,11 @@ function updatePriceSummary() {
   const roomTotal = selectedRoom.price * nights;
   const extraBedChecked = document.getElementById("extraBedCheck").checked;
   const extraBedFee = extraBedChecked ? (selectedRoom.extraBedPrice || 0) * nights : 0;
-  const earlyChecked = document.getElementById("earlyCheckinCheck").checked;
-  const checkinTimeVal = document.getElementById("checkinTime").value;
-  const earlyFee = computeEarlyCheckinFee(checkinTimeVal, earlyChecked);
-  const total = roomTotal + extraBedFee + earlyFee;
+  const total = roomTotal + extraBedFee;
 
   let html = summaryRow(t("sum_room_fee"), t("room_fee_line", { price: selectedRoom.price.toLocaleString(), n: nights, total: roomTotal.toLocaleString() }));
   if (extraBedChecked) {
     html += summaryRow(t("sum_extra_bed"), t("room_fee_line", { price: (selectedRoom.extraBedPrice || 0).toLocaleString(), n: nights, total: extraBedFee.toLocaleString() }));
-  }
-  if (earlyChecked && earlyFee > 0) {
-    html += summaryRow(t("sum_early_checkin"), t("fee_baht", { amount: earlyFee.toLocaleString() }));
   }
   html += summaryRow(t("price_summary_total"), t("fee_baht", { amount: total.toLocaleString() }), ' class="price-total"');
   box.innerHTML = html;
@@ -1305,7 +1274,6 @@ async function searchAvailability() {
     currentCheckout = checkout;
     availableRooms = data.rooms || [];
     if (data.defaultCheckinTime) defaultCheckinTime = data.defaultCheckinTime;
-    if (data.earlyCheckinFeePerHalfHour) earlyCheckinFeePerHalfHour = data.earlyCheckinFeePerHalfHour;
     document.getElementById("checkinTime").min = defaultCheckinTime;
     renderRooms();
     roomCard.style.display = "block";
@@ -1455,7 +1423,6 @@ function selectRoom(room, el) {
   el.classList.add("selected");
   selectedRoom = room;
   document.getElementById("extraBedCheck").checked = false;
-  document.getElementById("earlyCheckinCheck").checked = false;
   document.getElementById("checkinTime").min = defaultCheckinTime;
   document.getElementById("checkinTime").value = defaultCheckinTime;
   updateExtraBedLabel();
@@ -1505,10 +1472,8 @@ function renderOrderSummary() {
   const roomTotal = selectedRoom.price * nights;
   const extraBedChecked = document.getElementById("extraBedCheck").checked;
   const extraBedFee = extraBedChecked ? (selectedRoom.extraBedPrice || 0) * nights : 0;
-  const earlyChecked = document.getElementById("earlyCheckinCheck").checked;
   const checkinTime = document.getElementById("checkinTime").value;
-  const earlyFee = computeEarlyCheckinFee(checkinTime, earlyChecked);
-  const total = roomTotal + extraBedFee + earlyFee;
+  const total = roomTotal + extraBedFee;
   const guestCount = document.getElementById("guestCount").value;
   const carCount = document.getElementById("carCount").value;
   const guestName = document.getElementById("guestName").value.trim();
@@ -1525,9 +1490,6 @@ function renderOrderSummary() {
     row(t("sum_room_fee"), t("room_fee_line", { price: selectedRoom.price.toLocaleString(), n: nights, total: roomTotal.toLocaleString() }));
   if (extraBedChecked) {
     html += row(t("sum_extra_bed"), t("room_fee_line", { price: (selectedRoom.extraBedPrice || 0).toLocaleString(), n: nights, total: extraBedFee.toLocaleString() }));
-  }
-  if (earlyChecked && earlyFee > 0) {
-    html += row(t("sum_early_checkin"), t("fee_baht", { amount: earlyFee.toLocaleString() }));
   }
   html += row(t("sum_grand_total"), t("fee_baht", { amount: total.toLocaleString() }), ' class="price-total"');
   box.innerHTML = html;
@@ -1564,7 +1526,6 @@ async function submitBooking() {
   const checkinTime = document.getElementById("checkinTime").value;
   const note = document.getElementById("guestNote").value.trim();
   const extraBed = document.getElementById("extraBedCheck").checked;
-  const earlyCheckin = document.getElementById("earlyCheckinCheck").checked;
 
   if (!selectedRoom) {
     showMsg(confirmMsg, "error", t("err_select_room"));
@@ -1600,7 +1561,6 @@ async function submitBooking() {
         checkinTime: checkinTime,
         note: note,
         extraBed: extraBed,
-        earlyCheckin: earlyCheckin,
         slipBase64: slipBase64,
         slipMimeType: slipMimeType
       })
@@ -1632,7 +1592,6 @@ async function submitBooking() {
       document.getElementById("guestCount").disabled = true;
       document.getElementById("carCount").disabled = true;
       document.getElementById("extraBedCheck").disabled = true;
-      document.getElementById("earlyCheckinCheck").disabled = true;
       document.getElementById("checkinTime").disabled = true;
       document.getElementById("guestNote").disabled = true;
       document.getElementById("slipFile").disabled = true;
@@ -1669,17 +1628,23 @@ function renderMyResults(bookings) {
   const myResults = document.getElementById("myResults");
   myResults.innerHTML = "";
   myResults.dataset.lastBookings = JSON.stringify(bookings);
+  const myRow = (label, value) => `<div class="my-field-row"><span class="my-field-label">${label} :</span><span class="my-field-value">${value}</span></div>`;
   bookings.forEach(b => {
     const div = document.createElement("div");
     div.className = "my-booking-item";
+    const stayDate = `${formatThaiDate(b.checkin)} - ${formatThaiDate(b.checkout)}`;
+    const guestCountVal = b.guestCount ? t("guests_suffix", { n: b.guestCount }) : "-";
+    const carCountVal = b.carCount ? t("cars_suffix", { n: b.carCount }) : "-";
+    const checkinTimeVal = b.checkinTime ? t("time_suffix", { t: b.checkinTime }) : "-";
     div.innerHTML = `
       <div class="room-name">${b.roomName}</div>
-      <div class="room-meta">${t("my_guest_code", { name: b.guestName || "-", code: b.bookingCode })}</div>
-      <div class="room-meta">${t("my_checkin_checkout", { checkin: b.checkin, checkout: b.checkout })}</div>
-      <div class="room-meta">${t("my_guests_cars_time", { n: b.guestCount || "-", m: b.carCount || "-", t: b.checkinTime || "-" })}</div>
-      <div class="room-meta">${t("my_extra_bed", { val: b.extraBed || t("my_extra_bed_none") })}</div>
-      ${b.earlyCheckinFee ? `<div class="room-meta">${t("my_early_checkin_fee", { fee: Number(b.earlyCheckinFee).toLocaleString() })}</div>` : ""}
-      ${b.totalPrice ? `<div class="room-meta">${t("my_total", { total: Number(b.totalPrice).toLocaleString() })}</div>` : ""}
+      ${myRow(t("my_field_code"), b.bookingCode)}
+      ${myRow(t("my_field_guest_name"), b.guestName || "-")}
+      ${myRow(t("my_field_stay_date"), stayDate)}
+      ${myRow(t("my_field_extra_bed"), b.extraBed || t("my_extra_bed_none"))}
+      ${myRow(t("my_field_checkin_time"), checkinTimeVal)}
+      ${myRow(t("my_field_guest_count"), guestCountVal)}
+      ${myRow(t("my_field_car_count"), carCountVal)}
       ${b.note ? `<div class="room-meta">${t("my_note", { note: b.note })}</div>` : ""}
       <div class="status${b.status === "ยืนยันแล้ว" ? " status-confirmed" : ""}${b.status === "ยกเลิก" ? " status-cancelled" : ""}">${statusLabel(b.status)}</div>
     `;
