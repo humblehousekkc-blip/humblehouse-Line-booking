@@ -600,6 +600,75 @@
     margin-bottom: 6px;
     font-weight: 500;
   }
+  /* ตัวบอกขั้นตอนแบบเส้น Timeline (minimal) — โชว์เฉพาะหน้า 2-5 ของการจอง (ไม่โชว์ในหน้าค้นหา)
+     4 จุด: 1 เลือกห้องพัก, 2 ข้อมูลการจอง, 3 ชำระเงิน, 4 เสร็จสิ้น */
+  .step-timeline {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    margin: 2px 0 20px;
+    padding: 0 4px;
+  }
+  .step-timeline::before {
+    content: "";
+    position: absolute;
+    top: 11px;
+    left: 12.5%;
+    right: 12.5%;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .step-timeline-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .step-timeline-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 2px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: "Montserrat", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .step-timeline-label {
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    max-width: 68px;
+  }
+  .step-timeline-item.completed .step-timeline-dot {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent-dark);
+  }
+  .step-timeline-item.completed .step-timeline-label {
+    color: var(--text);
+  }
+  .step-timeline-item.active .step-timeline-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .step-timeline-item.active .step-timeline-label {
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
 </style>
 </head>
 <body>
@@ -623,6 +692,7 @@
 
   <div id="tabBook">
 
+  <div id="pageSearch">
   <div class="card">
     <label for="checkin"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span data-i18n="label_checkin">วันเช็คอิน</span></label>
     <input type="date" id="checkin" />
@@ -633,14 +703,34 @@
     <button id="btnSearch" type="button"><svg class="icon icon-lg" viewBox="0 0 24 24" style="stroke:currentColor;"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg><span data-i18n="btn_search">ค้นหาห้องว่าง</span></button>
     <div id="searchMsg" class="msg"></div>
   </div>
-
-  <div class="card" id="roomCard" style="display:none;">
-    <div style="font-weight:600; margin-bottom:4px;"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M3 19v-7a2 2 0 012-2h14a2 2 0 012 2v7"/><path d="M3 19v2M21 19v2"/><path d="M3 12V7a2 2 0 012-2h4a2 2 0 012 2v3"/><path d="M11 10h10"/></svg><span data-i18n="select_room_heading">เลือกห้องพัก</span></div>
-    <div class="hint" data-i18n="select_room_hint">แตะเพื่อเลือกห้องที่ต้องการ</div>
-    <div class="room-list" id="roomList"></div>
   </div>
 
-  <div class="card" id="guestCard" style="display:none;">
+  <div id="pageSelectRoom" style="display:none;">
+  <div class="step-timeline">
+    <div class="step-timeline-item active"><div class="step-timeline-dot">1</div><div class="step-timeline-label" data-i18n="step_tl_1">เลือกห้องพัก</div></div>
+    <div class="step-timeline-item"><div class="step-timeline-dot">2</div><div class="step-timeline-label" data-i18n="step_tl_2">ข้อมูลการจอง</div></div>
+    <div class="step-timeline-item"><div class="step-timeline-dot">3</div><div class="step-timeline-label" data-i18n="step_tl_3">ชำระเงิน</div></div>
+    <div class="step-timeline-item"><div class="step-timeline-dot">4</div><div class="step-timeline-label" data-i18n="step_tl_4">เสร็จสิ้น</div></div>
+  </div>
+
+  <div class="card" id="roomCard">
+    <div style="font-weight:600; margin-bottom:4px;"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M3 19v-7a2 2 0 012-2h14a2 2 0 012 2v7"/><path d="M3 19v2M21 19v2"/><path d="M3 12V7a2 2 0 012-2h4a2 2 0 012 2v3"/><path d="M11 10h10"/></svg><span data-i18n="select_room_heading">เลือกห้องพัก</span></div>
+    <div class="hint" data-i18n="select_room_hint">แตะเพื่อเลือกห้องที่ต้องการ</div>
+    <div id="roomListMsg" class="msg"></div>
+    <div class="room-list" id="roomList"></div>
+    <button type="button" id="btnBackToSearch" class="secondary-btn" data-i18n="btn_back_to_search">ย้อนกลับ: เปลี่ยนวันที่</button>
+  </div>
+  </div>
+
+  <div id="pageGuestInfo" style="display:none;">
+  <div class="step-timeline">
+    <div class="step-timeline-item completed"><div class="step-timeline-dot">&#10003;</div><div class="step-timeline-label" data-i18n="step_tl_1">เลือกห้องพัก</div></div>
+    <div class="step-timeline-item active"><div class="step-timeline-dot">2</div><div class="step-timeline-label" data-i18n="step_tl_2">ข้อมูลการจอง</div></div>
+    <div class="step-timeline-item"><div class="step-timeline-dot">3</div><div class="step-timeline-label" data-i18n="step_tl_3">ชำระเงิน</div></div>
+    <div class="step-timeline-item"><div class="step-timeline-dot">4</div><div class="step-timeline-label" data-i18n="step_tl_4">เสร็จสิ้น</div></div>
+  </div>
+
+  <div class="card" id="guestCard">
     <div class="step-label" data-i18n="step1_label">ขั้นตอนที่ 1 — ข้อมูลผู้จอง</div>
 
     <label for="guestName"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg><span data-i18n="label_guest_name">ชื่อผู้จอง</span></label>
@@ -669,8 +759,9 @@
       <span id="extraBedLabel">รับบริการเตียงเสริม<br><span class="checkbox-sub">(เข้าพักเพิ่มขึ้นอีก 1 ท่าน)</span></span>
     </label>
 
-    <label for="checkinTime"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg><span data-i18n="label_checkin_time">เวลาเข้าที่พัก (ปกติ 14:00 น.)</span></label>
+    <label for="checkinTime"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg><span data-i18n="label_checkin_time">เวลาเข้าที่พัก</span></label>
     <input type="time" id="checkinTime" value="14:00" min="14:00" />
+    <div class="hint" data-i18n="checkin_time_range_hint">เวลาเช็คอิน 14:00 น. เป็นต้นไป</div>
     <div class="hint" data-i18n="early_checkin_hint">รับบริการ Early check-in กรุณาติดต่อพนักงาน</div>
 
     <div class="price-summary" id="priceSummary" style="display:none;"></div>
@@ -679,10 +770,20 @@
     <input type="text" id="guestNote" placeholder="เช่น ความต้องการพิเศษ" data-i18n-placeholder="placeholder_note" />
 
     <button id="btnGoPayment" type="button" data-i18n="btn_go_payment">ถัดไป: สรุปยอด &amp; ชำระเงิน</button>
+    <button type="button" id="btnBackToSelectRoom" class="secondary-btn" data-i18n="btn_back_to_select_room">ย้อนกลับ: เลือกห้องใหม่</button>
     <div id="guestFormMsg" class="msg"></div>
   </div>
+  </div>
 
-  <div class="card" id="paymentCard" style="display:none;">
+  <div id="pagePayment" style="display:none;">
+  <div class="step-timeline">
+    <div class="step-timeline-item completed"><div class="step-timeline-dot">&#10003;</div><div class="step-timeline-label" data-i18n="step_tl_1">เลือกห้องพัก</div></div>
+    <div class="step-timeline-item completed"><div class="step-timeline-dot">&#10003;</div><div class="step-timeline-label" data-i18n="step_tl_2">ข้อมูลการจอง</div></div>
+    <div class="step-timeline-item active"><div class="step-timeline-dot">3</div><div class="step-timeline-label" data-i18n="step_tl_3">ชำระเงิน</div></div>
+    <div class="step-timeline-item"><div class="step-timeline-dot">4</div><div class="step-timeline-label" data-i18n="step_tl_4">เสร็จสิ้น</div></div>
+  </div>
+
+  <div class="card" id="paymentCard">
     <div class="step-label" data-i18n="step2_label">ขั้นตอนที่ 2 — สรุปยอด &amp; ชำระเงิน</div>
 
     <div class="price-summary" id="orderSummary" style="display:block;"></div>
@@ -703,7 +804,22 @@
     <button id="btnConfirm" type="button"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.5l2.4 2.4L16 9.3"/></svg><span data-i18n="btn_confirm">ยืนยันการจอง</span></button>
     <button id="btnBackToGuest" type="button" class="secondary-btn" data-i18n="btn_back_to_guest">ย้อนกลับแก้ไขข้อมูล</button>
     <div id="confirmMsg" class="msg"></div>
+  </div>
+  </div>
+
+  <div id="pageNotify" style="display:none;">
+  <div class="step-timeline">
+    <div class="step-timeline-item completed"><div class="step-timeline-dot">&#10003;</div><div class="step-timeline-label" data-i18n="step_tl_1">เลือกห้องพัก</div></div>
+    <div class="step-timeline-item completed"><div class="step-timeline-dot">&#10003;</div><div class="step-timeline-label" data-i18n="step_tl_2">ข้อมูลการจอง</div></div>
+    <div class="step-timeline-item completed"><div class="step-timeline-dot">&#10003;</div><div class="step-timeline-label" data-i18n="step_tl_3">ชำระเงิน</div></div>
+    <div class="step-timeline-item active"><div class="step-timeline-dot">4</div><div class="step-timeline-label" data-i18n="step_tl_4">เสร็จสิ้น</div></div>
+  </div>
+
+  <div class="card" id="notifyCard">
+    <div class="step-label" data-i18n="step3_label">ขั้นตอนที่ 3 — แจ้งพนักงาน</div>
+    <div id="notifyMsg" class="msg success" style="display:block;"></div>
     <a id="btnNotifyLine" class="line-notify-btn" href="#" target="_blank" rel="noopener"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M4 12c0-4.4 3.8-8 8.5-8s8.5 3.6 8.5 8-3.8 8-8.5 8c-1 0-2-.15-2.9-.45L5 21l1.3-3.9C4.8 15.7 4 13.9 4 12z"/></svg><span data-i18n="btn_notify_line">แจ้งพนักงานทาง LINE</span></a>
+  </div>
   </div>
 
   </div>
@@ -770,8 +886,14 @@ const I18N = {
     label_checkout: "วันเช็คเอาท์",
     btn_search: "ค้นหาห้องว่าง",
     btn_search_loading: "กำลังตรวจสอบห้องว่าง...",
+    step_tl_1: "เลือกห้องพัก",
+    step_tl_2: "ข้อมูลการจอง",
+    step_tl_3: "ชำระเงิน",
+    step_tl_4: "เสร็จสิ้น",
     select_room_heading: "เลือกห้องพัก",
     select_room_hint: "แตะเพื่อเลือกห้องที่ต้องการ",
+    btn_back_to_search: "ย้อนกลับ: เปลี่ยนวันที่",
+    btn_back_to_select_room: "ย้อนกลับ: เลือกห้องใหม่",
     step1_label: "ขั้นตอนที่ 1 — ข้อมูลผู้จอง",
     label_guest_name: "ชื่อผู้จอง",
     placeholder_guest_name: "ชื่อ-นามสกุล",
@@ -785,7 +907,8 @@ const I18N = {
     extra_bed_sub_default: "(เข้าพักเพิ่มขึ้นอีก 1 ท่าน)",
     extra_bed_priced: "รับบริการเตียงเสริม (+{price} บาท/คืน)",
     extra_bed_sub_priced: "(เข้าพักสูงสุด {n} ท่าน)",
-    label_checkin_time: "เวลาเข้าที่พัก (ปกติ 14:00 น.)",
+    label_checkin_time: "เวลาเข้าที่พัก",
+    checkin_time_range_hint: "เวลาเช็คอิน 14:00 น. เป็นต้นไป",
     early_checkin_hint: "รับบริการ Early check-in กรุณาติดต่อพนักงาน",
     label_note: "หมายเหตุ (ถ้ามี)",
     placeholder_note: "เช่น ความต้องการพิเศษ",
@@ -845,13 +968,13 @@ const I18N = {
     time_suffix: "{t} น.",
     room_fee_line: "{price} บาท × {n} คืน = {total} บาท",
     fee_baht: "{amount} บาท",
-    confirm_success_line1: "จองสำเร็จ! ทางโรงแรมจะติดต่อยืนยันกลับไปที่เบอร์ที่ให้ไว้",
-    confirm_checkin_checkout: "เช็คอิน {checkin} — เช็คเอาท์ {checkout}",
-    confirm_guest_name: "ชื่อผู้จอง: {name}",
-    confirm_guest_count: "จำนวนผู้เข้าพัก: {n} คน",
-    confirm_room: "ห้อง: {room}",
-    confirm_extra_bed_suffix: " (มีเตียงเสริม)",
-    confirm_save_code: "กรุณาบันทึกรหัสนี้ไว้เพื่อใช้ตรวจสอบสถานะการจองภายหลัง",
+    confirm_success_line1: "จองสำเร็จ",
+    confirm_extra_bed_yes: "มีเตียงเสริม",
+    confirm_field_room_type: "ประเภทห้อง",
+    confirm_field_special_request: "คำขอพิเศษ",
+    confirm_no_request: "ไม่มี",
+    confirm_closing_line: "กรุณากดปุ่มแจ้งพนักงาน<br>เพื่อรับเอกสารยืนยันการเข้าพัก",
+    step3_label: "ขั้นตอนที่ 3 — แจ้งพนักงาน",
     btn_notify_line: "แจ้งพนักงานทาง LINE",
     notify_line_message: "สวัสดีค่ะ ต้องการแจ้งรหัสจอง {code} ค่ะ",
     my_field_code: "รหัสจอง",
@@ -876,8 +999,14 @@ const I18N = {
     label_checkout: "Check-out Date",
     btn_search: "Search Availability",
     btn_search_loading: "Checking availability...",
+    step_tl_1: "Select Room",
+    step_tl_2: "Guest Info",
+    step_tl_3: "Payment",
+    step_tl_4: "Done",
     select_room_heading: "Select a Room",
     select_room_hint: "Tap to select your room",
+    btn_back_to_search: "Back: Change Dates",
+    btn_back_to_select_room: "Back: Choose Another Room",
     step1_label: "Step 1 — Guest Information",
     label_guest_name: "Guest Name",
     placeholder_guest_name: "Full name",
@@ -891,7 +1020,8 @@ const I18N = {
     extra_bed_sub_default: "(+1 additional guest)",
     extra_bed_priced: "Add an Extra Bed (+{price} THB/night)",
     extra_bed_sub_priced: "(Up to {n} guests)",
-    label_checkin_time: "Check-in Time (standard 14:00)",
+    label_checkin_time: "Check-in Time",
+    checkin_time_range_hint: "Check-in from 14:00 onwards",
     early_checkin_hint: "For Early Check-in service, please contact staff directly.",
     label_note: "Note (optional)",
     placeholder_note: "e.g. special requests",
@@ -951,13 +1081,13 @@ const I18N = {
     time_suffix: "{t}",
     room_fee_line: "{price} THB × {n} night(s) = {total} THB",
     fee_baht: "{amount} THB",
-    confirm_success_line1: "Booking successful! The hotel will contact you to confirm at the number provided",
-    confirm_checkin_checkout: "Check-in {checkin} — Check-out {checkout}",
-    confirm_guest_name: "Guest: {name}",
-    confirm_guest_count: "Guests: {n}",
-    confirm_room: "Room: {room}",
-    confirm_extra_bed_suffix: " (with extra bed)",
-    confirm_save_code: "Please save this code to check your booking status later",
+    confirm_success_line1: "Booking Confirmed",
+    confirm_extra_bed_yes: "With Extra Bed",
+    confirm_field_room_type: "Room Type",
+    confirm_field_special_request: "Special Request",
+    confirm_no_request: "None",
+    confirm_closing_line: "Please tap the Notify Staff button<br>to receive your stay confirmation document",
+    step3_label: "Step 3 — Notify Staff",
     btn_notify_line: "Notify Staff via LINE",
     notify_line_message: "Hi, I'd like to confirm my booking code {code}.",
     my_field_code: "Booking Code",
@@ -1098,8 +1228,14 @@ function fillCarCountOptions() {
 updateGuestCountOptions();
 fillCarCountOptions();
 
-document.getElementById("extraBedCheck").addEventListener("change", () => {
+document.getElementById("extraBedCheck").addEventListener("change", (e) => {
   updateGuestCountOptions();
+  if (e.target.checked) {
+    // ติ๊กเตียงเสริม -> เด้งจำนวนผู้เข้าพักไปที่จำนวนสูงสุด (ปกติ +1 คนจากที่พักได้ปกติ) ให้อัตโนมัติ
+    const guestSel = document.getElementById("guestCount");
+    const maxGuests = selectedRoom ? (selectedRoom.maxGuests || 2) : 2;
+    guestSel.value = String(maxGuests + 1);
+  }
   updateExtraBedLabel();
   updatePriceSummary();
 });
@@ -1233,18 +1369,22 @@ document.getElementById("checkin").addEventListener("change", () => {
 
 document.getElementById("btnSearch").addEventListener("click", searchAvailability);
 
+/* ===== หน้าจอง (4 หน้า): เปลี่ยนหน้าด้วย goToPage() แทนการ toggle display ทีละการ์ดแบบเดิม ===== */
+function goToPage(pageId) {
+  ["pageSearch", "pageSelectRoom", "pageGuestInfo", "pagePayment", "pageNotify"].forEach(id => {
+    document.getElementById(id).style.display = (id === pageId) ? "block" : "none";
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 async function searchAvailability() {
   const checkin = document.getElementById("checkin").value;
   const checkout = document.getElementById("checkout").value;
   const searchMsg = document.getElementById("searchMsg");
-  const roomCard = document.getElementById("roomCard");
-  const guestCard = document.getElementById("guestCard");
-  const paymentCard = document.getElementById("paymentCard");
+  const roomListMsg = document.getElementById("roomListMsg");
 
   hideMsg(searchMsg);
-  roomCard.style.display = "none";
-  guestCard.style.display = "none";
-  paymentCard.style.display = "none";
+  hideMsg(roomListMsg);
   selectedRoom = null;
 
   if (!checkin || !checkout) {
@@ -1276,10 +1416,10 @@ async function searchAvailability() {
     if (data.defaultCheckinTime) defaultCheckinTime = data.defaultCheckinTime;
     document.getElementById("checkinTime").min = defaultCheckinTime;
     renderRooms();
-    roomCard.style.display = "block";
+    goToPage("pageSelectRoom");
 
     if (availableRooms.every(r => r.remaining <= 0)) {
-      showMsg(searchMsg, "info", t("info_no_rooms"));
+      showMsg(roomListMsg, "info", t("info_no_rooms"));
     }
   } catch (err) {
     showMsg(searchMsg, "error", t("err_connection"));
@@ -1288,6 +1428,10 @@ async function searchAvailability() {
     btn.textContent = t("btn_search");
   }
 }
+
+document.getElementById("btnBackToSearch").addEventListener("click", () => {
+  goToPage("pageSearch");
+});
 
 function renderRooms() {
   const list = document.getElementById("roomList");
@@ -1428,12 +1572,15 @@ function selectRoom(room, el) {
   updateExtraBedLabel();
   updateGuestCountOptions();
   updatePriceSummary();
-  document.getElementById("guestCard").style.display = "block";
-  document.getElementById("paymentCard").style.display = "none";
   hideMsg(document.getElementById("guestFormMsg"));
   hideMsg(document.getElementById("confirmMsg"));
   document.getElementById("btnNotifyLine").style.display = "none";
+  goToPage("pageGuestInfo");
 }
+
+document.getElementById("btnBackToSelectRoom").addEventListener("click", () => {
+  goToPage("pageSelectRoom");
+});
 
 /* ===== ขั้นตอนที่ 1 -> 2: ตรวจข้อมูลผู้จอง แล้วไปหน้าสรุปยอด/ชำระเงิน ===== */
 document.getElementById("btnGoPayment").addEventListener("click", goToPayment);
@@ -1460,10 +1607,8 @@ function goToPayment() {
   }
 
   renderOrderSummary();
-  document.getElementById("guestCard").style.display = "none";
-  document.getElementById("paymentCard").style.display = "block";
   hideMsg(document.getElementById("confirmMsg"));
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  goToPage("pagePayment");
 }
 
 function renderOrderSummary() {
@@ -1496,9 +1641,7 @@ function renderOrderSummary() {
 }
 
 document.getElementById("btnBackToGuest").addEventListener("click", () => {
-  document.getElementById("paymentCard").style.display = "none";
-  document.getElementById("guestCard").style.display = "block";
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  goToPage("pageGuestInfo");
 });
 
 document.getElementById("btnCopyAccount").addEventListener("click", async () => {
@@ -1568,15 +1711,27 @@ async function submitBooking() {
     const data = await res.json();
 
     if (data.ok) {
-      confirmMsg.className = "msg success";
-      confirmMsg.innerHTML = t("confirm_success_line1") + "<br>" +
+      const notifyMsg = document.getElementById("notifyMsg");
+      notifyMsg.className = "msg success";
+      notifyMsg.style.textAlign = "center";
+      const confirmRow = (label, value) => `<div><span class="sum-label">${label} :</span> <span class="sum-value">${value}</span></div>`;
+      const stayDateVal = `${formatThaiDate(data.checkin || currentCheckin)} - ${formatThaiDate(data.checkout || currentCheckout)}`;
+      const roomTypeVal = data.roomName || (selectedRoom && selectedRoom.name) || "";
+      const extraBedVal = data.wantsExtraBed ? t("confirm_extra_bed_yes") : t("my_extra_bed_none");
+      const specialRequestVal = (data.note || note) ? (data.note || note) : t("confirm_no_request");
+      notifyMsg.innerHTML =
+        `<div style="font-weight:600; margin-bottom:6px;">${t("confirm_success_line1")}</div>` +
         `<span class="booking-code">${data.bookingCode}</span>` +
-        `<br>` + t("confirm_checkin_checkout", { checkin: data.checkin || currentCheckin, checkout: data.checkout || currentCheckout }) +
-        `<br>` + t("confirm_guest_name", { name: data.guestName || name }) +
-        `<br>` + t("confirm_guest_count", { n: data.guestCount || guestCount }) +
-        `<br>` + t("confirm_room", { room: data.roomName || (selectedRoom && selectedRoom.name) || "" }) + (data.wantsExtraBed ? t("confirm_extra_bed_suffix") : "") +
-        "<br>" + t("confirm_save_code");
-      confirmMsg.style.display = "block";
+        `<div class="price-summary" style="margin-top:12px; text-align:left;">` +
+          confirmRow(t("my_field_guest_name"), data.guestName || name) +
+          confirmRow(t("my_field_guest_count"), t("guests_suffix", { n: data.guestCount || guestCount })) +
+          confirmRow(t("my_field_stay_date"), stayDateVal) +
+          confirmRow(t("confirm_field_room_type"), roomTypeVal) +
+          confirmRow(t("my_field_extra_bed"), extraBedVal) +
+          confirmRow(t("confirm_field_special_request"), specialRequestVal) +
+        `</div>` +
+        `<div style="margin-top:10px;">${t("confirm_closing_line")}</div>`;
+      notifyMsg.style.display = "block";
 
       // ปุ่มแจ้งพนักงานทาง LINE แบบ pre-fill ข้อความ (มีรหัสจองติดไปด้วย เพื่อให้แอดมินเช็คได้ว่าเป็นการจองไหน)
       const notifyBtn = document.getElementById("btnNotifyLine");
@@ -1596,6 +1751,7 @@ async function submitBooking() {
       document.getElementById("guestNote").disabled = true;
       document.getElementById("slipFile").disabled = true;
       document.getElementById("btnBackToGuest").disabled = true;
+      goToPage("pageNotify");
     } else if (data.code === "ROOM_JUST_TAKEN") {
       showMsg(confirmMsg, "error", t("err_room_just_booked"));
       btn.disabled = false;
