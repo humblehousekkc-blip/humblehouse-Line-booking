@@ -796,12 +796,12 @@
       <button type="button" id="btnCopyAccount" class="copy-btn" data-i18n="btn_copy_account">คัดลอกเลขบัญชี</button>
     </div>
 
-    <label for="slipFile"><svg class="icon" viewBox="0 0 24 24"><path d="M15.5 7l-6.8 6.8a2.6 2.6 0 003.7 3.7L19.5 10a4.2 4.2 0 00-5.9-5.9L6.5 11.2"/></svg><span data-i18n="label_attach_slip">แนบสลิปโอนเงิน</span></label>
+    <label for="slipFile"><svg class="icon" viewBox="0 0 24 24"><path d="M15.5 7l-6.8 6.8a2.6 2.6 0 003.7 3.7L19.5 10a4.2 4.2 0 00-5.9-5.9L6.5 11.2"/></svg><span data-i18n="label_attach_slip">แนบสลิปโอนเงิน (จำเป็น)</span></label>
     <input type="file" id="slipFile" accept="image/*" />
-    <div class="hint" id="slipHint" data-i18n="slip_hint_default">ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองก่อนยืนยันการจอง</div>
+    <div class="hint" id="slipHint" data-i18n="slip_hint_default">กรุณาแนบสลิปก่อนกดยืนยันการจอง — ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองอีกครั้ง</div>
     <img id="slipPreview" style="display:none; max-width:100%; margin-top:8px; border-radius:4px; border:1px solid var(--border);" />
 
-    <button id="btnConfirm" type="button"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.5l2.4 2.4L16 9.3"/></svg><span data-i18n="btn_confirm">ยืนยันการจอง</span></button>
+    <button id="btnConfirm" type="button" disabled><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.5l2.4 2.4L16 9.3"/></svg><span data-i18n="btn_confirm">ยืนยันการจอง</span></button>
     <button id="btnBackToGuest" type="button" class="secondary-btn" data-i18n="btn_back_to_guest">ย้อนกลับแก้ไขข้อมูล</button>
     <div id="confirmMsg" class="msg"></div>
   </div>
@@ -922,8 +922,8 @@ const I18N = {
     btn_copy_account: "คัดลอกเลขบัญชี",
     btn_copied: "คัดลอกแล้ว ✓",
     copy_prefix: "เลขบัญชี: ",
-    label_attach_slip: "แนบสลิปโอนเงิน",
-    slip_hint_default: "ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองก่อนยืนยันการจอง",
+    label_attach_slip: "แนบสลิปโอนเงิน (จำเป็น)",
+    slip_hint_default: "กรุณาแนบสลิปก่อนกดยืนยันการจอง — ทางโรงแรมจะตรวจสอบสลิปด้วยตัวเองอีกครั้ง",
     slip_hint_attached: "แนบสลิปแล้ว — ทางโรงแรมจะตรวจสอบก่อนยืนยันการจอง",
     btn_confirm: "ยืนยันการจอง",
     btn_confirm_loading: "กำลังส่งข้อมูล...",
@@ -946,6 +946,7 @@ const I18N = {
     err_select_room: "กรุณาเลือกห้องพักก่อน",
     err_name_phone_required: "กรุณากรอกชื่อและเบอร์โทรให้ครบ",
     err_guest_count_required: "กรุณาเลือกจำนวนผู้เข้าพัก",
+    err_slip_required: "กรุณาแนบสลิปโอนเงินก่อนยืนยันการจอง",
     err_room_just_booked: "ขออภัย ห้องนี้เพิ่งถูกจองไปเมื่อครู่ กรุณาค้นหาและเลือกห้องใหม่อีกครั้ง",
     err_phone_code_required: "กรุณากรอกเบอร์โทรและรหัสการจอง",
     room_full_badge: "เต็ม",
@@ -1035,8 +1036,8 @@ const I18N = {
     btn_copy_account: "Copy Account Number",
     btn_copied: "Copied ✓",
     copy_prefix: "Account No.: ",
-    label_attach_slip: "Attach Payment Slip",
-    slip_hint_default: "The hotel will verify your slip before confirming your booking",
+    label_attach_slip: "Attach Payment Slip (required)",
+    slip_hint_default: "Please attach your slip before confirming — the hotel will verify it again",
     slip_hint_attached: "Slip attached — the hotel will verify before confirming",
     btn_confirm: "Confirm Booking",
     btn_confirm_loading: "Submitting...",
@@ -1059,6 +1060,7 @@ const I18N = {
     err_select_room: "Please select a room first",
     err_name_phone_required: "Please fill in your name and phone number",
     err_guest_count_required: "Please select the number of guests",
+    err_slip_required: "Please attach your payment slip before confirming",
     err_room_just_booked: "Sorry, this room was just booked. Please search and select another room",
     err_phone_code_required: "Please enter your phone number and booking code",
     room_full_badge: "Full",
@@ -1316,7 +1318,7 @@ function switchTab(tab) {
 /* ===== แนบสลิป: ย่อรูปด้วย canvas ก่อนแปลงเป็น base64 (ลดขนาดไฟล์ก่อนส่ง) ===== */
 document.getElementById("slipFile").addEventListener("change", (e) => {
   const file = e.target.files[0];
-  if (!file) { slipBase64 = ""; slipMimeType = ""; return; }
+  if (!file) { slipBase64 = ""; slipMimeType = ""; document.getElementById("btnConfirm").disabled = true; return; }
 
   const reader = new FileReader();
   reader.onload = (ev) => {
@@ -1340,6 +1342,7 @@ document.getElementById("slipFile").addEventListener("change", (e) => {
       preview.src = dataUrl;
       preview.style.display = "block";
       document.getElementById("slipHint").textContent = t("slip_hint_attached");
+      document.getElementById("btnConfirm").disabled = false;
     };
     img.src = ev.target.result;
   };
@@ -1377,6 +1380,27 @@ function goToPage(pageId) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+/**
+ * เรียก fetch + parse JSON พร้อม retry อัตโนมัติ กันปัญหาเน็ตสะดุดชั่วคราว
+ * (พบบ่อยบนมือถือตอนสัญญาณ 4G ไม่นิ่ง) ลองใหม่สูงสุด maxRetries ครั้ง (ไม่นับครั้งแรก)
+ * คั่นด้วย delay สั้นๆ ก่อนจะโยน error ออกไปจริงให้ผู้ใช้เห็น
+ */
+async function fetchJsonWithRetry(url, maxRetries = 2, delayMs = 800) {
+  let lastErr;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch(url);
+      return await res.json();
+    } catch (err) {
+      lastErr = err;
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 async function searchAvailability() {
   const checkin = document.getElementById("checkin").value;
   const checkout = document.getElementById("checkout").value;
@@ -1402,8 +1426,7 @@ async function searchAvailability() {
 
   try {
     const url = `${CONFIG.API_URL}?action=checkAvailability&checkin=${checkin}&checkout=${checkout}`;
-    const res = await fetch(url);
-    const data = await res.json();
+    const data = await fetchJsonWithRetry(url);
 
     if (!data.ok) {
       showMsg(searchMsg, "error", data.message || t("err_generic"));
@@ -1680,6 +1703,10 @@ async function submitBooking() {
   }
   if (!guestCount) {
     showMsg(confirmMsg, "error", t("err_guest_count_required"));
+    return;
+  }
+  if (!slipBase64) {
+    showMsg(confirmMsg, "error", t("err_slip_required"));
     return;
   }
 
